@@ -1,0 +1,98 @@
+# Separator Voltage
+
+record(ai, "$(P)VOLT")
+{
+  field(SCAN, "1 second")
+  field(DESC, "Voltage")
+  field(EGU, "kV")
+  field(DTYP, "Soft Channel")
+  field(INP,  "$(DAQMX):VOLT:DATA CP MS")
+  field(PREC, "3")
+  info(INTEREST, "HIGH")
+  info(archive, "VAL")
+}
+
+
+record(subArray, "$(DAQMX):VOLT:DATA") {
+  field(SCAN,"I/O Intr")
+#  field(SCAN,".5 seconds")
+  field(PINI, "NO")
+  field(DTYP, "Soft Channel")
+  field(PREC, "5")
+  field(INP, "$(DAQMX):VOLT:DATA:_RAW")
+  field(NELM, "1")
+  field(INDX, "0")
+  field(FTVL, "DOUBLE")
+}
+
+record(waveform, "$(DAQMX):VOLT:DATA:_RAW") {
+  field(SCAN,"I/O Intr")
+#  field(SCAN,".5 seconds")
+  field(PINI, "NO")
+  field(DTYP, "asynFloat64ArrayIn")
+  field(PREC, "5")
+  field(INP, "@asyn(R0 2 5.0) DATA")
+  field(NELM, "1")
+  field(FTVL, "DOUBLE")
+  field(EVNT, "1")
+}
+
+record(calcout, "$(DAQMX):VOLT:CALC"){
+  field(DESC, "Sends 1 to ACQUIRE when triggered")
+  field(CALC, "1")
+  field(OOPT, "Every Time")
+  field(OUT, "$(DAQMX):VOLT:SP:ACQUIRE PP")
+}
+
+record(bo, "$(DAQMX):VOLT:ACQUIRE") {
+  field(SCAN, "Passive")
+  field(PINI, "NO")
+  field(DTYP, "asynUInt32Digital")
+  field(OUT, "@asynMask(W0 2 0x01)ACQUIRE")
+  field(ZNAM, "stop")
+  field(ONAM, "run")
+}
+
+
+## DAQMXI stuff
+
+record(ao, "$(P)VOLT:SP")
+{
+  field(DESC, "Voltage set point")
+  field(EGU, "kV")
+  field(SCAN, "Passive")
+  field(DTYP, "Soft Channel")
+  field(FLNK, "$(DAQMX):VOLT:SP:CALC")
+  field(OUT,  "$(DAQMX):VOLT:SP:DATA PP")
+  field(PREC, "2")
+}
+
+record(ao, "$(DAQMX):VOLT:SP:DATA"){
+  $(IFNOTRECSIM)  field(DTYP, "asynFloat64")
+  $(IFRECSIM) field(DTYP, "Soft Record")
+
+  field(OUT, "@asyn(W0, 2, 5.0) DATA")
+  field(PREC, 2)
+  field(SIML, "$(DAQMX):SIMULATE")
+  field(SIOL, "$(DAQMX):VOLT:SP:DATA:SIM PP")
+}
+
+record(calcout, "$(DAQMX):VOLT:SP:CALC"){
+  field(DESC, "Sends 1 to ACQUIRE when triggered")
+  field(CALC, "1")
+  field(OOPT, "Every Time")
+  field(OUT, "$(DAQMX):VOLT:SP:ACQUIRE PP")
+}
+
+record(bo, "$(DAQMX):VOLT:SP:ACQUIRE") {
+  field(SCAN, "Passive")
+  field(PINI, "NO")
+  field(DTYP, "asynUInt32Digital")
+  field(OUT, "@asynMask(W0 2 0x01)ACQUIRE")
+  field(ZNAM, "stop")
+  field(ONAM, "run")
+}
+
+record(ao, "$(DAQMX):VOLT:DATA:SIM"){
+    field(DESC, "Output data for RECSIM")
+}
