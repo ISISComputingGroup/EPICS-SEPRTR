@@ -5,11 +5,19 @@ record(ai, "$(P)VOLT")
   field(DESC, "Voltage")
   field(EGU, "kV")
   field(DTYP, "Soft Channel")
-  field(INP,  "$(DAQMX):VOLT:DATA CP MS") # input from DATA aray
-  field(PREC, "3")
+  field(INP,  "$(P)CALIBRATE:VOLT CP MS") # input from DATA array
+  field(PREC, "5")
   info(INTEREST, "HIGH")
   info(archive, "VAL")
     field(TPRO, "1")
+}
+
+record(calc, "$(P)CALIBRATE:VOLT")
+{
+    field(DESC, "Calibrates the voltage")
+    field(INPA, "$(DAQMX):VOLT:DATA CP MS")
+    field(CALC, "A * $(PSU_MAX_VOLT) / 10")
+    field(PREC, "5")
 }
 
 record(subArray, "$(DAQMX):VOLT:DATA") {
@@ -18,15 +26,15 @@ record(subArray, "$(DAQMX):VOLT:DATA") {
   field(PREC, "5")
   field(INP, "$(DAQMX):VOLT:_RAW CP MS")
   field(NELM, "1") # 1 Element
-  field(INDX, "0") # from first index of sub array
+  field(INDX, "0")
   field(FTVL, "DOUBLE")
     field(TPRO, "1")
 }
 
 record(waveform, "$(DAQMX):VOLT:_RAW") {
-  $(IFNOTRECSIM) field(SCAN,"I/O Intr")
-  #field(SCAN,  ".5 seconds")
-  #field(SCAN,".5 seconds")
+  $(IFNOTRECSIM) field(SCAN,".5 second")
+  #field(SCAN,  ".5 second")
+  #field(SCAN,".5 second")
   field(PINI, "NO")
   $(IFNOTRECSIM)  field(DTYP, "asynFloat64ArrayIn")
   $(IFRECSIM) field(DTYP, "Soft Channel")
@@ -66,13 +74,21 @@ record(acalcout, "$(DAQMX):SIM:CALC"){
 #   field(OUT, "$(DAQMX):VOLT:SP:ACQUIRE PP")
 # }
 
-record(bo, "$(DAQMX):VOLT:ACQUIRE") {
-  field(SCAN, "Passive")
-  field(PINI, "NO")
+record(calcout, "$(DAQMX):VOLT:ACQUIRE:_BUG") {
+
+  field(INPA, "$(DAQMX):VOLT:ACQUIRE.VAL CP MS")
+  field(CALC, "!A")
+  field(OUT, "$(DAQMX):VOLT:ACQUIRE.VAL PP")
+  field(OOPT, "When Non-zero")
+}
+
+record(longout, "$(DAQMX):VOLT:ACQUIRE") {
+  field(SCAN, ".2 second")
   field(DTYP, "asynUInt32Digital")
   field(OUT, "@asynMask(R0 2 0x01) ACQUIRE")
-  field(ZNAM, "stop")
-  field(ONAM, "run")
+#  field(ZNAM, "stop")
+#  field(ONAM, "run")
+  field(TPRO, "1")
 }
 
 
