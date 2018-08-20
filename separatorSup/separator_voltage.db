@@ -32,7 +32,7 @@ record(subArray, "$(DAQMX):VOLT:DATA") {
 }
 
 record(waveform, "$(DAQMX):VOLT:_RAW") {
-  $(IFNOTRECSIM) field(SCAN,".5 second")
+  $(IFNOTRECSIM) field(SCAN,"I/O Intr")
   #field(SCAN,  ".5 second")
   #field(SCAN,".5 second")
   field(PINI, "NO")
@@ -74,7 +74,7 @@ record(acalcout, "$(DAQMX):SIM:CALC"){
 #   field(OUT, "$(DAQMX):VOLT:SP:ACQUIRE PP")
 # }
 
-record(calcout, "$(DAQMX):VOLT:ACQUIRE:_BUG") {
+record(calcout, "$(DAQMX):VOLT:ACQUIRE:_TRIG") {
 
   field(INPA, "$(DAQMX):VOLT:ACQUIRE.VAL CP MS")
   field(CALC, "!A")
@@ -83,7 +83,7 @@ record(calcout, "$(DAQMX):VOLT:ACQUIRE:_BUG") {
 }
 
 record(longout, "$(DAQMX):VOLT:ACQUIRE") {
-  field(SCAN, ".2 second")
+  field(SCAN, ".5 second")
   field(DTYP, "asynUInt32Digital")
   field(OUT, "@asynMask(R0 2 0x01) ACQUIRE")
 #  field(ZNAM, "stop")
@@ -102,9 +102,19 @@ record(ao, "$(P)VOLT:SP")
   field(EGU, "kV")
   field(SCAN, "Passive")
   field(DTYP, "Soft Channel")
-  field(FLNK, "$(DAQMX):VOLT:SP:CALC")
-  field(OUT,  "$(DAQMX):VOLT:SP:DATA PP")
+  # field(FLNK, "$(DAQMX):VOLT:SP:CALC")
+  # field(OUT,  "$(P)CALIBRATE:VOLT:SP PP")
   field(PREC, "2")
+}
+
+record(calcout, "$(P)CALIBRATE:VOLT:SP")
+{
+    field(DESC, "Calibrates the voltage setpoint")
+    field(INPA, "$(P)VOLT:SP CP MS")
+    field(CALC, "(A * 10) / $(PSU_MAX_VOLT)")
+    field(PREC, "5")
+    field(FLNK, "$(DAQMX):VOLT:SP:CALC")
+    field(OUT, "$(DAQMX):VOLT:SP:DATA PP")
 }
 
 record(ao, "$(DAQMX):VOLT:SP:DATA"){
@@ -112,7 +122,7 @@ record(ao, "$(DAQMX):VOLT:SP:DATA"){
   $(IFRECSIM) field(DTYP, "Soft Channel")
 
   field(OUT, "@asyn(W0, 2, 5.0) DATA")
-  field(PREC, 2)
+  field(PREC, "5")
   field(SIML, "$(P)SIM")
   field(SIOL, "$(DAQMX):VOLT:SIM")
 }
