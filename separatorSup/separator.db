@@ -1,63 +1,10 @@
-record(ai, "$(P)VOLT")
+record(bo, "$(P)SIM")
 {
-  field(DESC, "Voltage")
-  field(EGU, "kV")
-  field(DTYP, "Soft Channel")
-  field(INP,  "$(DAQMX):R02:DATA:_RAW CP MS") #guessed port+channel needs changing
-  field(PREC, "3")
-  info(INTEREST, "HIGH")
-  info(archive, "VAL")
-}
-
-record(ao, "$(P)VOLT:SP")
-{
-  field(DESC, "Voltage set point")
-  field(EGU, "kV")
-  field(SCAN, "Passive")
-  field(DTYP, "Soft Channel")
-  field(OUT,  "$(DAQMX):W02:DATA:_RAW PP")
-  field(PREC, "3")
-}
-
-record(ai, "$(P)VOLT:SP:RBV")
-{
-  field(DESC, "Voltage setpoint readback")
-  field(EGU,  "kV")
-  field(DTYP, "Soft Channel")
-  field(INP,  "$(DAQMX):W02:DATA:_RAW CP MS")
-  field(PREC, "3")
-  info(archive, "VAL")
-}
-
-record(ai, "$(P)CURR")
-{
-  field(DESC, "Current")
-  field(EGU,  "mA")
-  field(DTYP, "Soft Channel")
-  field(INP,  "$(DAQMX):R03:DATA:_RAW CP MS")
-  field(PREC, "3")
-  info(INTEREST, "HIGH")
-  info(archive, "VAL")
-}
-
-record(ao, "$(P)CURR:SP")
-{
-  field(DESC, "Current Setpoint")
-  field(EGU,  "mA")
-  field(SCAN, "Passive")
-  field(DTYP, "Soft Channel")
-  field(OUT,  "$(DAQMX):W03:DATA:_RAW PP")
-  field(PREC, "3")
-}
-
-record(ai, "$(P)CURR:SP:RBV")
-{
-  field(DESC, "Current Setpoint Readback")
-  field(EGU,  "mA")
-  field(DTYP, "Soft Channel")
-  field(INP,  "$(DAQMX):W03:DATA:_RAW CP MS")
-  field(PREC, "3")
-  info(archive, "VAL")
+    field(SCAN, "Passive")
+    field(DTYP, "Soft Channel")
+    field(ZNAM, "NO")
+    field(ONAM, "YES")
+    field(VAL, "$(RECSIM=0)")
 }
 
 record(calc, "$(P)STAT:POWER:_CALC")
