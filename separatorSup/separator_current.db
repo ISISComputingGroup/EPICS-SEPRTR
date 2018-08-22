@@ -1,0 +1,95 @@
+# Separator Current
+
+record(ai, "$(P)CURR")
+{
+  field(DESC, "Current")
+  field(EGU, "mA")
+  field(HIGH,  "2.6") # Magic number is DAQ max with small tolerance
+  field(LOW,  "-0.1") # Magic number is DAQ min with small tolernace
+  field(HSV,  "MINOR")
+  field(LSV,  "MINOR")
+  field(DTYP, "Soft Channel")
+  field(INP,  "$(P)CALIBRATE:CURR CP MS") # input from DATA array
+  field(PREC, "5")
+  info(INTEREST, "HIGH")
+  info(archive, "VAL")
+    field(TPRO, "1")
+}
+
+record(calc, "$(P)CALIBRATE:CURR")
+{
+    field(DESC, "Calibrates the current")
+    # Recsim testing here because simulating a waveform and an I/O Intr is very
+    # difficult. This is the deepest level that can be tested without
+    # significant effort/restructuring
+    $(IFNOTRECSIM) field(INPA, "$(DAQMX):CURR:DATA CP MS")
+    $(IFRECSIM) field(INPA, "$(DAQMX):CURR:SIM CP MS")
+    field(CALC, "A * $(PSU_MAX_CURR) / 10")
+    field(PREC, "5")
+}
+
+record(subArray, "$(DAQMX):CURR:DATA")
+{
+  field(PINI, "NO")
+  field(DTYP, "Soft Channel")
+  field(PREC, "5")
+  field(INP, "$(DAQMX):CURR:_RAW CP MS")
+  field(NELM, "1") # 1 Element
+  field(INDX, "0")
+  field(FTVL, "DOUBLE")
+    field(TPRO, "1")
+}
+
+record(waveform, "$(DAQMX):CURR:_RAW")
+{
+  $(IFNOTRECSIM) field(SCAN,"I/O Intr")
+  #field(SCAN,  ".5 second")
+  #field(SCAN,".5 second")
+  field(PINI, "NO")
+  $(IFNOTRECSIM)  field(DTYP, "asynFloat64ArrayIn")
+  $(IFRECSIM) field(DTYP, "Soft Channel")
+  field(PREC, "5")
+  field(INP, "@asyn(R0 3 5.0) DATA")
+  field(NELM, "1000")
+  field(FTVL, "DOUBLE")
+  field(EVNT, "1")
+  field(SIML, "$(P)SIM")
+  field(SIOL, "$(DAQMX):CURR:WV:SIM CP")
+  field(TPRO, "1")
+  field(FLNK, "$(DAQMX):CURR:CALC")
+}
+
+record(waveform,  "$(DAQMX):CURR:WV:SIM")
+{
+  field(DESC,  "Current simulation")
+  field(NELM,  "1")
+  field(FTVL,  "DOUBLE")
+    field(TPRO, "1")
+}
+
+record(acalcout, "$(DAQMX):SIM:CALC")
+{
+  field(DESC, "Converts current to waveform")
+  field(INPA, "$(DAQMX):CURR:SIM CP")
+  field(CALC, "ARR(A)")
+  field(OOPT, "Every Time")
+  field(OUT, "$(DAQMX):CURR:WV:SIM PP")
+  field(DOPT, "Use CALC")
+    field(TPRO, "1")
+}
+
+record(calcout, "$(DAQMX):CURR:ACQUIRE:_TRIG")
+{
+  field(INPA, "$(DAQMX):CURR:ACQUIRE.VAL CP MS")
+  field(CALC, "!A")
+  field(OUT, "$(DAQMX):CURR:ACQUIRE.VAL PP")
+  field(OOPT, "When Non-zero")
+}
+
+record(longout, "$(DAQMX):CURR:ACQUIRE")
+{
+  field(SCAN, ".5 second")
+  field(DTYP, "asynUInt32Digital")
+  field(OUT, "@asynMask(R0 3 0x01) ACQUIRE")
+  field(TPRO, "1")
+}
