@@ -13,7 +13,6 @@ record(ai, "$(P)CURR")
   field(PREC, "5")
   info(INTEREST, "HIGH")
   info(archive, "VAL")
-    field(TPRO, "1")
 }
 
 record(calc, "$(P)CALIBRATE:CURR")
@@ -37,14 +36,11 @@ record(subArray, "$(DAQMX):CURR:DATA")
   field(NELM, "1") # 1 Element
   field(INDX, "0")
   field(FTVL, "DOUBLE")
-    field(TPRO, "1")
 }
 
 record(waveform, "$(DAQMX):CURR:_RAW")
 {
   $(IFNOTRECSIM) field(SCAN,"I/O Intr")
-  #field(SCAN,  ".5 second")
-  #field(SCAN,".5 second")
   field(PINI, "NO")
   $(IFNOTRECSIM)  field(DTYP, "asynFloat64ArrayIn")
   $(IFRECSIM) field(DTYP, "Soft Channel")
@@ -55,7 +51,6 @@ record(waveform, "$(DAQMX):CURR:_RAW")
   field(EVNT, "1")
   field(SIML, "$(P)SIM")
   field(SIOL, "$(DAQMX):CURR:WV:SIM CP")
-  field(TPRO, "1")
   field(FLNK, "$(DAQMX):CURR:CALC")
 }
 
@@ -64,7 +59,6 @@ record(waveform,  "$(DAQMX):CURR:WV:SIM")
   field(DESC,  "Current simulation")
   field(NELM,  "1")
   field(FTVL,  "DOUBLE")
-    field(TPRO, "1")
 }
 
 record(acalcout, "$(DAQMX):SIM:CALC")
@@ -75,7 +69,6 @@ record(acalcout, "$(DAQMX):SIM:CALC")
   field(OOPT, "Every Time")
   field(OUT, "$(DAQMX):CURR:WV:SIM PP")
   field(DOPT, "Use CALC")
-    field(TPRO, "1")
 }
 
 record(calcout, "$(DAQMX):CURR:ACQUIRE:_TRIG")
@@ -91,5 +84,4 @@ record(longout, "$(DAQMX):CURR:ACQUIRE")
   field(SCAN, ".5 second")
   field(DTYP, "asynUInt32Digital")
   field(OUT, "@asynMask(R0 3 0x01) ACQUIRE")
-  field(TPRO, "1")
 }

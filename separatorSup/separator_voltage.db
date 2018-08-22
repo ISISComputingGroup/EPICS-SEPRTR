@@ -7,8 +7,6 @@ record(bo, "$(P)SIM")
   field(VAL, "$(RECSIM=0)")
 }
 
-# Separator Voltage
-
 record(ai, "$(P)VOLT")
 {
   field(DESC, "Voltage")
@@ -22,7 +20,6 @@ record(ai, "$(P)VOLT")
   field(PREC, "5")
   info(INTEREST, "HIGH")
   info(archive, "VAL")
-    field(TPRO, "1")
 }
 
 record(calc, "$(P)CALIBRATE:VOLT")
@@ -46,7 +43,6 @@ record(subArray, "$(DAQMX):VOLT:DATA")
   field(NELM, "1") # 1 Element
   field(INDX, "0")
   field(FTVL, "DOUBLE")
-    field(TPRO, "1")
 }
 
 record(waveform, "$(DAQMX):VOLT:_RAW")
@@ -64,7 +60,6 @@ record(waveform, "$(DAQMX):VOLT:_RAW")
   field(EVNT, "1")
   field(SIML, "$(P)SIM")
   field(SIOL, "$(DAQMX):VOLT:WV:SIM CP")
-  field(TPRO, "1")
   field(FLNK, "$(DAQMX):VOLT:CALC")
 }
 
@@ -73,7 +68,6 @@ record(waveform,  "$(DAQMX):VOLT:WV:SIM")
   field(DESC,  "Voltage simulation")
   field(NELM,  "1")
   field(FTVL,  "DOUBLE")
-    field(TPRO, "1")
 }
 
 record(acalcout, "$(DAQMX):SIM:CALC")
@@ -85,7 +79,6 @@ record(acalcout, "$(DAQMX):SIM:CALC")
   field(OOPT, "Every Time")
   field(OUT, "$(DAQMX):VOLT:WV:SIM PP")
   field(DOPT, "Use CALC")
-    field(TPRO, "1")
 }
 
 record(calcout, "$(DAQMX):VOLT:ACQUIRE:_TRIG")
@@ -101,9 +94,7 @@ record(longout, "$(DAQMX):VOLT:ACQUIRE")
   field(SCAN, ".5 second")
   field(DTYP, "asynUInt32Digital")
   field(OUT, "@asynMask(R0 2 0x01) ACQUIRE")
-  field(TPRO, "1")
 }
-
 
 ####################################
 ####### Setting the voltage ########
@@ -113,6 +104,8 @@ record(ao, "$(P)VOLT:SP")
 {
   field(DESC, "Voltage set point")
   field(EGU, "kV")
+  field(DRVH,  "200")
+  field(DRVL,  "0")
   field(SCAN, "Passive")
   field(DTYP, "Soft Channel")
   field(PREC, "2")
@@ -132,7 +125,6 @@ record(ao, "$(DAQMX):VOLT:SP:DATA")
 {
   $(IFNOTRECSIM)  field(DTYP, "asynFloat64")
   $(IFRECSIM) field(DTYP, "Soft Channel")
-
   field(OUT, "@asyn(W0, 2, 5.0) DATA")
   field(PREC, "5")
   field(SIML, "$(P)SIM")
@@ -145,25 +137,4 @@ record(ai, "$(DAQMX):VOLT:SIM")
   field(DESC, "Device voltage")
   field(DTYP, "Soft Channel")
   field(PREC, "5")
-    field(TPRO, "1")
 }
-
-###### NOT NEEDED PROBABLY
-# record(calcout, "$(DAQMX):VOLT:SP:CALC")
-# {
-#   field(DESC, "Sends 1 to ACQUIRE when triggered")
-#   field(CALC, "1")
-#   field(OOPT, "Every Time")
-#   field(OUT, "$(DAQMX):VOLT:SP:ACQUIRE PP")
-#   field(TPRO, "1")
-# }
-#
-# record(bo, "$(DAQMX):VOLT:SP:ACQUIRE")
-# {
-#   field(SCAN, "Passive")
-#   field(PINI, "NO")
-#   field(DTYP, "asynUInt32Digital")
-#   field(OUT, "@asynMask(W0 2 0x01) ACQUIRE")
-#   field(ZNAM, "stop")
-#   field(ONAM, "run")
-# }
