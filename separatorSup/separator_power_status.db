@@ -2,17 +2,15 @@ record(calcout, "$(P)STAT:POWER:_CALC")
 {
   field(INPA, "$(P)VOLT.VAL CP MS")
   field(CALC, A>0.1) #PSU ON if voltage across DAQ is >0.1kV
-  field(OUT,  "$(P)POWER")
+  field(OUT,  "$(P)POWER:STAT")
 }
 
-record(bi, "$(P)POWER")
+record(bi, "$(P)POWER:STAT")
 {
   field(DESC, "PSU Power Status")
   field(INP, "$(P)STAT:POWER:_CALC CP")
   field(DTYP, "Soft Channel")
   field(ZNAM, "OFF")
   field(ONAM, "ON")
-  field(SIML, "$(P)SIM")
-  field(SIOL, "$(P)SIM:STAT:POWER")
   field(SDIS, "$(P)DISABLE")
 }

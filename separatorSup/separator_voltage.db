@@ -7,6 +7,16 @@ record(bo, "$(P)SIM")
   field(VAL, "$(RECSIM=0)")
 }
 
+record(bo, "$(P)DISABLE")
+{
+  field(DESC, "Disable comms")
+  field(PINI, "YES")
+  field(VAL, "$(DISABLE=0)")
+  field(OMSL, "supervisory")
+  field(ZNAM, "COMMS ENABLED")
+  field(ONAM, "COMMS DISABLED")
+}
+
 record(ai, "$(P)VOLT")
 {
   field(DESC, "Voltage")
@@ -61,6 +71,7 @@ record(waveform, "$(DAQMX):VOLT:_RAW")
   field(SIML, "$(P)SIM")
   field(SIOL, "$(DAQMX):VOLT:WV:SIM CP")
   field(FLNK, "$(DAQMX):VOLT:CALC")
+  field(SDIS, "$(P)DISABLE")
 }
 
 record(waveform,  "$(DAQMX):VOLT:WV:SIM")
@@ -94,6 +105,7 @@ record(longout, "$(DAQMX):VOLT:ACQUIRE")
   field(SCAN, ".5 second")
   field(DTYP, "asynUInt32Digital")
   field(OUT, "@asynMask(R0 2 0x01) ACQUIRE")
+  field(SDIS, "$(P)DISABLE")
 }
 
 ####################################
@@ -129,6 +141,7 @@ record(ao, "$(DAQMX):VOLT:SP:DATA")
   field(PREC, "5")
   field(SIML, "$(P)SIM")
   field(SIOL, "$(DAQMX):VOLT:SIM")
+  field(SDIS, "$(P)DISABLE")
 }
 
 record(ai, "$(DAQMX):VOLT:SIM")

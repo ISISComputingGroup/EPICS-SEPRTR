@@ -51,6 +51,7 @@ record(waveform, "$(DAQMX):CURR:_RAW")
   field(EVNT, "1")
   field(SIML, "$(P)SIM")
   field(SIOL, "$(DAQMX):CURR:WV:SIM CP")
+  field(SDIS, "$(P)DISABLE")
   field(FLNK, "$(DAQMX):CURR:CALC")
 }
 
@@ -84,4 +85,5 @@ record(longout, "$(DAQMX):CURR:ACQUIRE")
   field(SCAN, ".5 second")
   field(DTYP, "asynUInt32Digital")
   field(OUT, "@asynMask(R0 3 0x01) ACQUIRE")
+  field(SDIS, "$(P)DISABLE")
 }
