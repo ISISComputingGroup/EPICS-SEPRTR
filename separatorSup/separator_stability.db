@@ -1,0 +1,158 @@
+record(waveform, "$(P)VOLT:CALC")
+{
+    field(SCAN, "Passive")
+    field(NELM, "1000")
+    field(FTVL, "DOUBLE")	
+}
+
+record(waveform, "$(P)CURR:CALC")
+{
+    field(SCAN, "Passive")
+    field(NELM, "1000")
+    field(FTVL, "DOUBLE")
+}
+
+
+record(ai, "$(P)SAMPLETIME")
+{
+
+    field(SCAN, "Passive")
+    field(VAL, "1.0")
+}
+
+record(ai, "$(P)VOLT:UPPERLIM")
+{
+
+    field(SCAN, "Passive")
+    field(VAL, "6.0")
+}
+
+record(ai, "$(P)VOLT:LOWERLIM")
+{
+
+    field(SCAN, "Passive")
+    field(VAL, "4.0")
+}
+
+record(ai, "$(P)CURR:STEADY")
+{
+    field(SCAN, "Passive")
+    field(VAL, "1.0")
+}
+
+record(ai, "$(P)CURR:LIMIT")
+{
+    field(SCAN, "Passive")
+    field(VAL, "0.5")
+}
+
+record(acalcout, "$(P)_STABILITYCHECK")
+{
+    field(DESC, "Finds number of samples outside limits")
+    field(OOPT, "Every Time")
+    #field(FLNK, "$(P)STABILITY PP")
+    field(NELM, "1000")
+	
+	
+    # 0 if sample is within threshold, 1 if sample is outside threshold
+    # A is upper limit, B is lower limit, C + D is current threshold
+    field(CALC, "SUM((A<AA)||(B>AA)||((C+D)<=BB))")
+
+	# This will update on new voltage and current data. This may need revisiting to only update once.
+    field(INAA, "$(P)VOLT:CALC CP")
+    field(INBB, "$(P)CURR:CALC NPP")
+	
+    field(INPA, "$(P)VOLT:UPPERLIM NPP")
+    field(INPB, "$(P)VOLT:LOWERLIM NPP")
+    field(INPC, "$(P)CURR:STEADY NPP")
+    field(INPD, "$(P)CURR:LIMIT NPP")
+
+    field(OUT, "$(P)STABILITY PP")
+}
+
+record(compress, "$(P)_SAMPLEBUFFER")
+{
+    field(DESC, "1 second stability data buffer")
+    field(SCAN, "Passive")
+    field(ALG, "Circular Buffer")
+    field(NSAM, "1000")
+
+    field(FLNK, "$(P)_STABILITYSUM PP")
+
+    field(INP, "$(P)STABILITY NPP")
+}
+
+
+record(acalcout, "$(P)_STABILITYSUM")
+{
+    field(DESC, "Counts unstable time")
+    field(SCAN, "Passive")
+    field(OOPT, "Every Time")
+
+
+    field(NELM, "1000")
+
+	field(CALC, "SUM(AA)")
+
+    field(INAA, "$(P)_SAMPLEBUFFER NPP")
+
+    field(OUT, "$(P)_COUNTER PP")
+}
+
+#record(calc, "$(P)_STABILITYSUM")
+#{
+#    field(DESC, "Counts unstable time")
+#    field(SCAN, "Passive")
+#
+#	field(CALC, "A+B")
+#
+#    field(INPA, "$(P)STABILITY CP")
+#    field(INPB, "$(P)_COUNTER NPP")
+#
+#    #field(OUT, "$(P)_COUNTER PP")
+#}
+
+record(ai, "$(P)_COUNTER")
+{
+    field(SCAN, "Passive")
+    field(VAL, "0.")
+
+    #field(INP, "$(P)_STABILITYSUM NPP")
+}
+
+record(ao, "$(P)_ZEROCOUNTER")
+{
+    field(SCAN, "Passive")
+    field(VAL, "1")
+    field(OUT, "$(P)_SAMPLEBUFFER.RES")
+}
+
+record(compress, "$(P)_MOVINGBUFFER")
+{
+    field(SCAN, "Passive")
+    field(ALG, "Circular Buffer")
+    field(NSAM, "600")
+    field(INP, "$(P)_STABILITYSUM NPP")
+}
+
+record(fanout, "$(P)_COUNTERTIMING")
+{
+    field(SCAN, "1 second")
+#    field(LNK1, "$(P)_SAMPLEBUFFER PP")
+    field(LNK1, "$(P)_MOVINGBUFFER PP")
+    field(LNK2, "$(P)_ZEROCOUNTER PP")
+}
+
+record(calc, "$(P)STABILITY")
+{
+    field(DESC, "Calculates unstable time in sample set")
+    field(SCAN, "Passive")
+	
+	field(CALC, "A*B")
+	
+    field(INPA, "$(P)_STABILITYCHECK NPP ")
+	field(INPB, "$(P)SAMPLETIME NPP")
+
+    field(FLNK, "$(P)_SAMPLEBUFFER PP")
+	#field(OUT, "$(P)_SAMPLEBUFFER PP")
+}
