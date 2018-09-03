@@ -2,7 +2,7 @@ record(waveform, "$(P)VOLT:CALC")
 {
     field(SCAN, "Passive")
     field(NELM, "1000")
-    field(FTVL, "DOUBLE")	
+    field(FTVL, "DOUBLE")
 }
 
 record(waveform, "$(P)CURR:CALC")
@@ -18,6 +18,7 @@ record(ai, "$(P)SAMPLETIME")
 
     field(SCAN, "Passive")
     field(VAL, "1.0")
+    field(FTVL, "DOUBLE")
 }
 
 record(ai, "$(P)VOLT:UPPERLIM")
@@ -25,6 +26,7 @@ record(ai, "$(P)VOLT:UPPERLIM")
 
     field(SCAN, "Passive")
     field(VAL, "6.0")
+    field(FTVL, "DOUBLE")
 }
 
 record(ai, "$(P)VOLT:LOWERLIM")
@@ -32,18 +34,21 @@ record(ai, "$(P)VOLT:LOWERLIM")
 
     field(SCAN, "Passive")
     field(VAL, "4.0")
+    field(FTVL, "DOUBLE")
 }
 
 record(ai, "$(P)CURR:STEADY")
 {
     field(SCAN, "Passive")
     field(VAL, "1.0")
+    field(FTVL, "DOUBLE")
 }
 
 record(ai, "$(P)CURR:LIMIT")
 {
     field(SCAN, "Passive")
     field(VAL, "0.5")
+    field(FTVL, "DOUBLE")
 }
 
 record(acalcout, "$(P)_STABILITYCHECK")
@@ -98,19 +103,6 @@ record(acalcout, "$(P)_STABILITYSUM")
 
     field(OUT, "$(P)_COUNTER PP")
 }
-
-#record(calc, "$(P)_STABILITYSUM")
-#{
-#    field(DESC, "Counts unstable time")
-#    field(SCAN, "Passive")
-#
-#	field(CALC, "A+B")
-#
-#    field(INPA, "$(P)STABILITY CP")
-#    field(INPB, "$(P)_COUNTER NPP")
-#
-#    #field(OUT, "$(P)_COUNTER PP")
-#}
 
 record(ai, "$(P)_COUNTER")
 {
