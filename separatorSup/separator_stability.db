@@ -72,44 +72,33 @@ record(acalcout, "$(P)_STABILITYCHECK")
     field(INPC, "$(P)CURR:STEADY NPP")
     field(INPD, "$(P)CURR:LIMIT NPP")
 
-    field(OUT, "$(P)STABILITY PP")
+    field(FLNK, "$(P)_SAMPLEBUFFER PP")
 }
 
 record(compress, "$(P)_SAMPLEBUFFER")
 {
-    field(DESC, "1 second stability data buffer")
+    #field(DESC, "1 second stability data buffer")
     field(SCAN, "Passive")
     field(ALG, "Circular Buffer")
     field(NSAM, "1000")
 
-    field(FLNK, "$(P)_STABILITYSUM PP")
+    #field(FLNK, "$(P)_TOTALSAMPLES PP")
 
-    field(INP, "$(P)STABILITY NPP")
+    field(INP, "$(P)_STABILITYCHECK NPP")
 }
 
 
-record(acalcout, "$(P)_STABILITYSUM")
+record(acalcout, "$(P)_TOTALSAMPLES")
 {
     field(DESC, "Counts unstable time")
     field(SCAN, "Passive")
     field(OOPT, "Every Time")
 
-
     field(NELM, "1000")
 
-	field(CALC, "SUM(AA)")
+    field(CALC, "SUM(AA)")
 
     field(INAA, "$(P)_SAMPLEBUFFER NPP")
-
-    field(OUT, "$(P)_COUNTER PP")
-}
-
-record(ai, "$(P)_COUNTER")
-{
-    field(SCAN, "Passive")
-    field(VAL, "0.")
-
-    #field(INP, "$(P)_STABILITYSUM NPP")
 }
 
 record(ao, "$(P)_ZEROCOUNTER")
@@ -121,10 +110,11 @@ record(ao, "$(P)_ZEROCOUNTER")
 
 record(compress, "$(P)_MOVINGBUFFER")
 {
+    field(DESC, "Records stability over time")
     field(SCAN, "Passive")
     field(ALG, "Circular Buffer")
     field(NSAM, "600")
-    field(INP, "$(P)_STABILITYSUM NPP")
+    field(INP, "$(P)_TOTALSAMPLES NPP")
 }
 
 record(fanout, "$(P)_COUNTERTIMING")
@@ -132,19 +122,17 @@ record(fanout, "$(P)_COUNTERTIMING")
     field(SCAN, "1 second")
 #    field(LNK1, "$(P)_SAMPLEBUFFER PP")
     field(LNK1, "$(P)_MOVINGBUFFER PP")
-    field(LNK2, "$(P)_ZEROCOUNTER PP")
+    #field(LNK2, "$(P)_ZEROCOUNTER PP")
+    field(LNK3, "$(P)STABILITY PP")
 }
 
-record(calc, "$(P)STABILITY")
+record(acalcout, "$(P)STABILITY")
 {
-    field(DESC, "Calculates unstable time in sample set")
+    field(DESC, "Calculates instability moving window")
     field(SCAN, "Passive")
 	
-	field(CALC, "A*B")
+	field(CALC, "SUM(AA)*B")
 	
-    field(INPA, "$(P)_STABILITYCHECK NPP ")
+    field(INPA, "$(P)_MOVINGBUFFER NPP ")
 	field(INPB, "$(P)SAMPLETIME NPP")
-
-    field(FLNK, "$(P)_SAMPLEBUFFER PP")
-	#field(OUT, "$(P)_SAMPLEBUFFER PP")
 }
