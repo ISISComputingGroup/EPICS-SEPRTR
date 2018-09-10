@@ -63,7 +63,6 @@ record(acalcout, "$(P)_STABILITYCHECK")
 {
     field(DESC, "Finds number of samples outside limits")
     field(OOPT, "Every Time")
-    #field(FLNK, "$(P)STABILITY PP")
     field(NELM, "1000")
 
 
@@ -79,8 +78,6 @@ record(acalcout, "$(P)_STABILITYCHECK")
     field(INPB, "$(P)VOLT:LOWERLIM NPP")
     field(INPC, "$(P)CURR:STEADY NPP")
     field(INPD, "$(P)CURR:LIMIT NPP")
-
-    #field(FLNK, "$(P)_SAMPLEBUFFER PP")
 
     field(FLNK, "$(P)_ADDCOUNTS")
 }
@@ -98,19 +95,6 @@ record(calcout, "$(P)_ADDCOUNTS")
     field(OUT, "$(P)_UNSTABLESAMPLES")
 }
 
-
-record(compress, "$(P)_SAMPLEBUFFER")
-{
-    #field(DESC, "1 second stability data buffer")
-    field(SCAN, "Passive")
-    field(ALG, "Circular Buffer")
-    field(NSAM, "1000")
-
-    field(INP, "$(P)_STABILITYCHECK NPP")
-
-    field(FLNK, "$(P)_UNSTABLESAMPLES")
-}
-
 record(acalcout, "$(P)_UNSTABLESAMPLES")
 {
     field(DESC, "Counts samples out of stable region")
@@ -124,13 +108,10 @@ record(acalcout, "$(P)_UNSTABLESAMPLES")
     field(INAA, "$(P)_SAMPLEBUFFER NPP")
 }
 
-
-## Replaced by fanout call to _SAMPLEBUFFER.RES?
 record(ao, "$(P)_ZEROCOUNTER")
 {
     field(SCAN, "Passive")
     field(VAL, "0")
-    #field(OUT, "$(P)_SAMPLEBUFFER.RES")
     field(OUT, "$(P)_ADDCOUNTS")
 }
 
@@ -172,11 +153,8 @@ record(compress, "$(P)_MOVINGBUFFER")
 record(fanout, "$(P)_COUNTERTIMING")
 {
     field(SCAN, "1 second")
-#    field(LNK1, "$(P)_SAMPLEBUFFER PP")
     field(LNK1, "$(P)_MOVINGBUFFER PP")
-    #field(LNK2, "$(P)_SAMPLEBUFFER.RES PP")
     field(LNK2, "$(P)_RESETBUFFER PP")
-    #field(LNK3, "$(P)STABILITY PP")
     field(LNK3, "$(P)_ZEROCOUNTER PP")
 }
 
