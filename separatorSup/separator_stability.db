@@ -1,3 +1,8 @@
+######################################
+##### These need to be replaced ######
+#### with updates from the device ####
+######################################
+
 record(waveform, "$(P)VOLT:CALC")
 {
     field(SCAN, "Passive")
@@ -12,13 +17,16 @@ record(waveform, "$(P)CURR:CALC")
     field(FTVL, "DOUBLE")
 }
 
+####################################
+## Stability boundary definitions ##
+##### need to be set by macros #####
+####################################
 
 record(ai, "$(P)SAMPLETIME")
 {
 
     field(SCAN, "Passive")
     field(VAL, "1.0")
-    field(FTVL, "DOUBLE")
 }
 
 record(ai, "$(P)VOLT:UPPERLIM")
@@ -26,7 +34,6 @@ record(ai, "$(P)VOLT:UPPERLIM")
 
     field(SCAN, "Passive")
     field(VAL, "6.0")
-    field(FTVL, "DOUBLE")
 }
 
 record(ai, "$(P)VOLT:LOWERLIM")
@@ -34,22 +41,23 @@ record(ai, "$(P)VOLT:LOWERLIM")
 
     field(SCAN, "Passive")
     field(VAL, "4.0")
-    field(FTVL, "DOUBLE")
 }
 
 record(ai, "$(P)CURR:STEADY")
 {
     field(SCAN, "Passive")
     field(VAL, "1.0")
-    field(FTVL, "DOUBLE")
 }
 
 record(ai, "$(P)CURR:LIMIT")
 {
     field(SCAN, "Passive")
     field(VAL, "0.5")
-    field(FTVL, "DOUBLE")
 }
+
+###################
+## Logic records ##
+###################
 
 record(acalcout, "$(P)_STABILITYCHECK")
 {
@@ -57,23 +65,39 @@ record(acalcout, "$(P)_STABILITYCHECK")
     field(OOPT, "Every Time")
     #field(FLNK, "$(P)STABILITY PP")
     field(NELM, "1000")
-	
-	
+
+
     # 0 if sample is within threshold, 1 if sample is outside threshold
     # A is upper limit, B is lower limit, C + D is current threshold
     field(CALC, "SUM((A<AA)||(B>AA)||((C+D)<=BB))")
 
-	# This will update on new voltage and current data. This may need revisiting to only update once.
+    # This will update on new voltage and current data. This may need revisiting to only update once.
     field(INAA, "$(P)VOLT:CALC CP")
     field(INBB, "$(P)CURR:CALC NPP")
-	
+
     field(INPA, "$(P)VOLT:UPPERLIM NPP")
     field(INPB, "$(P)VOLT:LOWERLIM NPP")
     field(INPC, "$(P)CURR:STEADY NPP")
     field(INPD, "$(P)CURR:LIMIT NPP")
 
-    field(FLNK, "$(P)_SAMPLEBUFFER PP")
+    #field(FLNK, "$(P)_SAMPLEBUFFER PP")
+
+    field(FLNK, "$(P)_ADDCOUNTS")
 }
+
+record(calcout, "$(P)_ADDCOUNTS")
+{
+    field(DESC, "Adds number of unstable points")
+    field(SCAN, "Passive")
+
+    field(CALC, "A+B")
+
+    field(INPA, "$(P)_ADDCOUNTS")
+    field(INPB, "$(P)_STABILITYCHECK CP")
+
+    field(OUT, "$(P)_UNSTABLESAMPLES")
+}
+
 
 record(compress, "$(P)_SAMPLEBUFFER")
 {
@@ -82,15 +106,14 @@ record(compress, "$(P)_SAMPLEBUFFER")
     field(ALG, "Circular Buffer")
     field(NSAM, "1000")
 
-    #field(FLNK, "$(P)_TOTALSAMPLES PP")
-
     field(INP, "$(P)_STABILITYCHECK NPP")
+
+    field(FLNK, "$(P)_UNSTABLESAMPLES")
 }
 
-
-record(acalcout, "$(P)_TOTALSAMPLES")
+record(acalcout, "$(P)_UNSTABLESAMPLES")
 {
-    field(DESC, "Counts unstable time")
+    field(DESC, "Counts samples out of stable region")
     field(SCAN, "Passive")
     field(OOPT, "Every Time")
 
@@ -101,20 +124,49 @@ record(acalcout, "$(P)_TOTALSAMPLES")
     field(INAA, "$(P)_SAMPLEBUFFER NPP")
 }
 
+
+## Replaced by fanout call to _SAMPLEBUFFER.RES?
 record(ao, "$(P)_ZEROCOUNTER")
 {
     field(SCAN, "Passive")
-    field(VAL, "1")
-    field(OUT, "$(P)_SAMPLEBUFFER.RES")
+    field(VAL, "0")
+    #field(OUT, "$(P)_SAMPLEBUFFER.RES")
+    field(OUT, "$(P)_ADDCOUNTS")
+}
+
+record(acalcout, "$(P)_RESETMOVINGAVG")
+{
+    field(DESC, "Resets the moving average")
+    field(SCAN, "Passive")
+    field(CALC, "ARR(0)")
+    field(NELM, "1000")
+    field(OOPT, "Every Time")
+    field(DOPT, "Use CALC")
+
+    field(OUT, "$(P)_MOVINGBUFFER")
+}
+
+record(acalcout, "$(P)_RESETBUFFER")
+{
+    field(DESC, "Resets the buffer of samples")
+    field(SCAN, "Passive")
+    field(CALC, "ARR(0)")
+    field(NELM, "1000")
+    field(OOPT, "Every Time")
+    field(DOPT, "Use CALC")
+
+    field(OUT, "$(P)_SAMPLEBUFFER PP")
 }
 
 record(compress, "$(P)_MOVINGBUFFER")
 {
-    field(DESC, "Records stability over time")
+    field(DESC, "Records time-binned stability")
     field(SCAN, "Passive")
     field(ALG, "Circular Buffer")
     field(NSAM, "600")
-    field(INP, "$(P)_TOTALSAMPLES NPP")
+    field(INP, "$(P)_UNSTABLESAMPLES NPP")
+
+    field(FLNK, "$(P)STABILITY PP")
 }
 
 record(fanout, "$(P)_COUNTERTIMING")
@@ -122,17 +174,19 @@ record(fanout, "$(P)_COUNTERTIMING")
     field(SCAN, "1 second")
 #    field(LNK1, "$(P)_SAMPLEBUFFER PP")
     field(LNK1, "$(P)_MOVINGBUFFER PP")
-    #field(LNK2, "$(P)_ZEROCOUNTER PP")
-    field(LNK3, "$(P)STABILITY PP")
+    #field(LNK2, "$(P)_SAMPLEBUFFER.RES PP")
+    field(LNK2, "$(P)_RESETBUFFER PP")
+    #field(LNK3, "$(P)STABILITY PP")
+    field(LNK3, "$(P)_ZEROCOUNTER PP")
 }
 
 record(acalcout, "$(P)STABILITY")
 {
-    field(DESC, "Calculates instability moving window")
+    field(DESC, "Calculates instability in moving average")
     field(SCAN, "Passive")
-	
-	field(CALC, "SUM(AA)*B")
-	
-    field(INPA, "$(P)_MOVINGBUFFER NPP ")
-	field(INPB, "$(P)SAMPLETIME NPP")
+
+    field(CALC, "SUM(AA)*B")
+
+    field(INAA, "$(P)_MOVINGBUFFER CP ")
+    field(INPB, "$(P)SAMPLETIME")
 }
