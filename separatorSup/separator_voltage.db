@@ -20,9 +20,9 @@ record(bo, "$(P)DISABLE")
 record(ai, "$(P)VOLT")
 {
   field(DESC, "Voltage")
-  field(EGU, "kV")
-  field(HIGH,  "210") # Magic number is DAQ max volt + 5%
-  field(LOW,  "-5") # Magic number is DAQ min volt - 5%
+  field(EGU,  "kV")
+  field(HIGH, "$(PSU_MAX_VOLT)")
+  field(LOW,  "0")
   field(HSV,  "MINOR")
   field(LSV,  "MINOR")
   field(DTYP, "Soft Channel")
@@ -46,7 +46,7 @@ record(calc, "$(P)CALIBRATE:VOLT")
 record (acalcout, "$(P)VOLT:DATA:_AVG") {
   field(DESC, "Averages the RAW data array")
   field(DTYP, "Soft Channel")
-  field(NELM, "1000")
+  field(NELM, "$(VOLT_NELM)")
   field(INAA, "$(DAQMX):VOLT:_RAW CP MS")
 
   field(CALC, "AVG(AA)")
@@ -64,7 +64,7 @@ record(waveform, "$(DAQMX):VOLT:_RAW")
   $(IFRECSIM) field(DTYP, "Soft Channel")
   field(PREC, "5")
   field(INP, "@asyn(R0 2 5.0) DATA")
-  field(NELM, "1000")
+  field(NELM, "$(VOLT_NELM)")
   field(FTVL, "DOUBLE")
   field(EVNT, "1")
   field(SIML, "$(P)SIM")
@@ -76,7 +76,7 @@ record(waveform, "$(DAQMX):VOLT:_RAW")
 record(waveform,  "$(DAQMX):VOLT:WV:SIM")
 {
   field(DESC,  "Voltage simulation")
-  field(NELM,  "1000")
+  field(NELM,  "$(VOLT_NELM)")
   field(FTVL,  "DOUBLE")
 }
 
@@ -85,7 +85,7 @@ record(acalcout, "$(DAQMX):SIM:CALC")
   field(DESC, "Converts voltage to waveform")
   field(INPA, "$(DAQMX):VOLT:SIM CP")
   field(CALC, "ARR(A)")
-  field(NELM, "1000")
+  field(NELM, "$(VOLT_NELM)")
 
   field(OOPT, "Every Time")
   field(OUT, "$(DAQMX):VOLT:WV:SIM PP")
