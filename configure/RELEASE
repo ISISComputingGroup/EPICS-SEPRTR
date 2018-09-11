@@ -3,3 +3,9 @@
 
 include $(TOP)/../../../ISIS_CONFIG
 -include $(TOP)/../../../ISIS_CONFIG.$(EPICS_HOST_ARCH)
+
+ASYN=$(SUPPORT)/asyn/master
+ONCRPC=$(SUPPORT)/oncrpc/master
+SNCSEQ=$(SUPPORT)/seq/master
+UTILITIES=$(SUPPORT)/utilities/master
+ASUBFUNCTIONS=$(SUPPORT)/asubFunctions/master
