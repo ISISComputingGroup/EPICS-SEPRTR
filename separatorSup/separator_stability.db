@@ -168,3 +168,25 @@ record(acalcout, "$(P)STABILITY")
     field(INAA, "$(P)_MOVINGBUFFER CP ")
     field(INPB, "$(P)SAMPLETIME")
 }
+
+record(aSub, "$(P)STABILITY:PARSE")
+{
+    field(SNAM, "parse_stability")
+
+    field(INPA, "$(P)TEMP CP")
+    field(FTA, "DOUBLE")
+
+    field(OUTA, "$(P)STATUS:TEMP")
+    field(FTVA, "DOUBLE")
+}
+
+record(ao, "$(P)TEMP")
+{
+    field(OUT, "$(P)STABILITY:PARSE")
+}
+
+record(ai, "$(P)STATUS:TEMP")
+{
+    field(VAL, "0")
+    field(INP, "$(P)STABILITY:PARSE.VALA")
+}

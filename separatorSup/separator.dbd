@@ -1,1 +1,1 @@
-function(separator_stability_parse)
+function(parse_stability)

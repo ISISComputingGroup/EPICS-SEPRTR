@@ -12,9 +12,9 @@ DB += separator_stability.db
 #protocol files
 DATA += separator.proto
 
-DBD += separator.dbd
-
 LIBRARY_IOC += SEPRTR
+
+DBD += separator.dbd
 
 SEPRTR_SRCS += separator.c separator_impl.cpp
 
