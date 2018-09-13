@@ -80,6 +80,7 @@ record(acalcout, "$(P)_STABILITYCHECK")
     field(INPD, "$(P)CURR:LIMIT NPP")
 
     field(FLNK, "$(P)_ADDCOUNTS")
+    #field(OUT, "$(P)_ADDCOUNTS PP")
 }
 
 record(calcout, "$(P)_ADDCOUNTS")
@@ -90,7 +91,7 @@ record(calcout, "$(P)_ADDCOUNTS")
     field(CALC, "A+B")
 
     field(INPA, "$(P)_ADDCOUNTS")
-    field(INPB, "$(P)_STABILITYCHECK CP")
+    field(INPB, "$(P)_STABILITYCHECK")
 
     #field(OUT, "$(P)_UNSTABLESAMPLES")
     #field(OUT, "$(P)STABILITY:PARSE PP")
@@ -157,37 +158,46 @@ record(fanout, "$(P)_COUNTERTIMING")
     field(LNK1, "$(P)STABILITY:PARSE PP")
 #    field(LNK1, "$(P)_MOVINGBUFFER PP")
 #    field(LNK2, "$(P)_RESETBUFFER PP")
-#    field(LNK3, "$(P)_ZEROCOUNTER PP")
+    field(LNK3, "$(P)_ZEROCOUNTER PP")
 }
 
-record(acalcout, "$(P)STABILITY")
+#record(acalcout, "$(P)STABILITY")
+#{
+#    field(DESC, "Calculates instability in moving average")
+#    field(SCAN, "Passive")
+#
+#    field(CALC, "SUM(AA)*B")
+#
+#    field(INAA, "$(P)_MOVINGBUFFER CP ")
+#    field(INPB, "$(P)SAMPLETIME")
+#}
+
+record(calc, "$(P)STABILITY")
 {
-    field(DESC, "Calculates instability in moving average")
     field(SCAN, "Passive")
+    field(CALC, "A * B")
 
-    field(CALC, "SUM(AA)*B")
-
-    field(INAA, "$(P)_MOVINGBUFFER CP ")
-    field(INPB, "$(P)SAMPLETIME")
+    #field(INPA, "$(P)STABILITY:PARSE.OUTA")
+    field(INPB, "$(P)SAMPLETIME CP")
 }
 
 record(aSub, "$(P)STABILITY:PARSE")
 {
     field(SNAM, "parse_stability")
-    field(SCAN, "1 second")
+#    field(SCAN, "1 second")
     field(PINI, "YES")
 
-    field(INPA, "$(P)_ADDCOUNTS CP")
+    field(INPA, "$(P)_ADDCOUNTS")
     field(FTA, "LONG")
 
-    field(INPB, "$(P)WINDOWSIZE CP")
+    field(INPB, "$(P)WINDOWSIZE")
     field(FTB, "LONG")
 
     field(INPC, "$(P)RESETWINDOW CP")
     field(FTC, "LONG")
 
-    field(OUTA, "$(P)STABILITY PP")
-    field(FTVA, "DOUBLE")
+    field(OUTA, "$(P)STABILITY.A PP")
+    field(FTVA, "LONG")
 
     field(OUTB, "$(P)RESETWINDOW PP")
     field(FTVB, "LONG")
