@@ -92,21 +92,22 @@ record(calcout, "$(P)_ADDCOUNTS")
     field(INPA, "$(P)_ADDCOUNTS")
     field(INPB, "$(P)_STABILITYCHECK CP")
 
-    field(OUT, "$(P)_UNSTABLESAMPLES")
+    #field(OUT, "$(P)_UNSTABLESAMPLES")
+    #field(OUT, "$(P)STABILITY:PARSE PP")
 }
 
-record(acalcout, "$(P)_UNSTABLESAMPLES")
-{
-    field(DESC, "Counts samples out of stable region")
-    field(SCAN, "Passive")
-    field(OOPT, "Every Time")
-
-    field(NELM, "1000")
-
-    field(CALC, "SUM(AA)")
-
-    field(INAA, "$(P)_SAMPLEBUFFER NPP")
-}
+#record(acalcout, "$(P)_UNSTABLESAMPLES")
+#{
+#    field(DESC, "Counts samples out of stable region")
+#    field(SCAN, "Passive")
+#    field(OOPT, "Every Time")
+#
+#    field(NELM, "1000")
+#
+#    field(CALC, "SUM(AA)")
+#
+#    field(INAA, "$(P)_SAMPLEBUFFER NPP")
+#}
 
 record(ao, "$(P)_ZEROCOUNTER")
 {
@@ -115,47 +116,48 @@ record(ao, "$(P)_ZEROCOUNTER")
     field(OUT, "$(P)_ADDCOUNTS")
 }
 
-record(acalcout, "$(P)_RESETMOVINGAVG")
-{
-    field(DESC, "Resets the moving average")
-    field(SCAN, "Passive")
-    field(CALC, "ARR(0)")
-    field(NELM, "1000")
-    field(OOPT, "Every Time")
-    field(DOPT, "Use CALC")
+#record(acalcout, "$(P)_RESETMOVINGAVG")
+#{
+#    field(DESC, "Resets the moving average")
+#    field(SCAN, "Passive")
+#    field(CALC, "ARR(0)")
+#    field(NELM, "1000")
+#    field(OOPT, "Every Time")
+#    field(DOPT, "Use CALC")
+#
+#    field(OUT, "$(P)_MOVINGBUFFER")
+#}
 
-    field(OUT, "$(P)_MOVINGBUFFER")
-}
-
-record(acalcout, "$(P)_RESETBUFFER")
-{
-    field(DESC, "Resets the buffer of samples")
-    field(SCAN, "Passive")
-    field(CALC, "ARR(0)")
-    field(NELM, "1000")
-    field(OOPT, "Every Time")
-    field(DOPT, "Use CALC")
-
-    field(OUT, "$(P)_SAMPLEBUFFER PP")
-}
-
-record(compress, "$(P)_MOVINGBUFFER")
-{
-    field(DESC, "Records time-binned stability")
-    field(SCAN, "Passive")
-    field(ALG, "Circular Buffer")
-    field(NSAM, "600")
-    field(INP, "$(P)_UNSTABLESAMPLES NPP")
-
-    field(FLNK, "$(P)STABILITY PP")
-}
+#record(acalcout, "$(P)_RESETBUFFER")
+#{
+#    field(DESC, "Resets the buffer of samples")
+#    field(SCAN, "Passive")
+#    field(CALC, "ARR(0)")
+#    field(NELM, "1000")
+#    field(OOPT, "Every Time")
+#    field(DOPT, "Use CALC")
+#
+#    field(OUT, "$(P)_SAMPLEBUFFER PP")
+#}
+#
+#record(compress, "$(P)_MOVINGBUFFER")
+#{
+#    field(DESC, "Records time-binned stability")
+#    field(SCAN, "Passive")
+#    field(ALG, "Circular Buffer")
+#    field(NSAM, "600")
+#    field(INP, "$(P)_UNSTABLESAMPLES NPP")
+#
+#    field(FLNK, "$(P)STABILITY PP")
+#}
 
 record(fanout, "$(P)_COUNTERTIMING")
 {
     field(SCAN, "1 second")
-    field(LNK1, "$(P)_MOVINGBUFFER PP")
-    field(LNK2, "$(P)_RESETBUFFER PP")
-    field(LNK3, "$(P)_ZEROCOUNTER PP")
+    field(LNK1, "$(P)STABILITY:PARSE PP")
+#    field(LNK1, "$(P)_MOVINGBUFFER PP")
+#    field(LNK2, "$(P)_RESETBUFFER PP")
+#    field(LNK3, "$(P)_ZEROCOUNTER PP")
 }
 
 record(acalcout, "$(P)STABILITY")
@@ -172,21 +174,37 @@ record(acalcout, "$(P)STABILITY")
 record(aSub, "$(P)STABILITY:PARSE")
 {
     field(SNAM, "parse_stability")
+    field(SCAN, "1 second")
+    field(PINI, "YES")
 
-    field(INPA, "$(P)TEMP CP")
-    field(FTA, "DOUBLE")
+    field(INPA, "$(P)_ADDCOUNTS CP")
+    field(FTA, "LONG")
 
-    field(OUTA, "$(P)STATUS:TEMP")
+    field(INPB, "$(P)WINDOWSIZE CP")
+    field(FTB, "LONG")
+
+    field(INPC, "$(P)RESETWINDOW CP")
+    field(FTC, "LONG")
+
+    field(OUTA, "$(P)STABILITY PP")
     field(FTVA, "DOUBLE")
+
+    field(OUTB, "$(P)RESETWINDOW PP")
+    field(FTVB, "LONG")
 }
 
-record(ao, "$(P)TEMP")
+record(ai, "$(P)RESETWINDOW")
 {
-    field(OUT, "$(P)STABILITY:PARSE")
-}
-
-record(ai, "$(P)STATUS:TEMP")
-{
+    field(DESC, "Resets the moving window")
     field(VAL, "0")
-    field(INP, "$(P)STABILITY:PARSE.VALA")
+}
+#record(ao, "$(P)TEMP")
+#{
+#    field(OUT, "$(P)STABILITY:PARSE")
+#}
+#
+record(ai, "$(P)WINDOWSIZE")
+{
+    field(DESC, "Seconds in the moving window")
+    field(VAL, "600")
 }

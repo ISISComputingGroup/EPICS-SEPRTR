@@ -17,41 +17,60 @@
 
 #include "separator.h"
 
-typedef boost::circular_buffer<long> circbuffer;
-
-static boost::circular_buffer<long>* initCircularBuffer(long& bufferLen)
-{
-    /* Initialise a new circular buffer */
-    boost::circular_buffer<long> circularBuffer(bufferLen, bufferLen, long(0));
-
-    return &circularBuffer;
-}
+static std::map<std::string, boost::circular_buffer<long>*> pvHistory;
 
 long parse_stability_impl(aSubRecord *prec)
 {
-    static std::map<std::string, boost::circular_buffer<long>*> pvHistory;
-    circbuffer* circularBuffer;
+//    static std::map<std::string, boost::circular_buffer<long>*> pvHistory;
+    boost::circular_buffer<long> *circularBuffer;
 
-    long dataValue = *(long*)prec->a, bufferLen = *(long*)prec->b, sum=0;
-    //long bufferLen = *(long*)prec->b;
+    long dataValue = *(long*)prec->a, bufferLen = *(long*)prec->b, reset= *(long*)prec->c, sum=0;
+
+    std::cout << "Name " <<  prec->name << std::endl;
+
+    //std::cout << pvHistory.find(prec->name)->first << pvHistory.end()->first << std::endl;
+
+    // Type/value checking on input variables here
 
     if ( pvHistory.find(prec->name) == pvHistory.end() ) {
         /* This PV has not called the aSub function before. Initialise. */
-        //boost::circular_buffer<long>* circularBuffer = initCircularBuffer(bufferLen);
-        circularBuffer = initCircularBuffer(bufferLen);
 
-        pvHistory.insert(std::make_pair(prec->name, circularBuffer));
+        circularBuffer = new boost::circular_buffer<long>(bufferLen);
 
-    } else {
-        circularBuffer = pvHistory[prec->name];
-        //boost::circular_buffer<long>* circularBuffer = pvHistory[prec->name];
+        //std::cout << prec->name << " A Buffer Length " << std::endl;
+        std::cout << prec->name << " A Buffer Length " << bufferLen << std::endl;
+
+        //pvHistory.insert(std::make_pair(prec->name, &circularBuffer) );
+        pvHistory[prec->name] = circularBuffer;
+
+    } else if (reset != 0) {
+
+        std::cout << prec->name << " B" << std::endl;
+
+        circularBuffer = new boost::circular_buffer<long>(bufferLen);
+
+        pvHistory[prec->name] = circularBuffer;
+
     }
 
-    (*circularBuffer).push_back(dataValue);
+    else {
+        std::cout << prec->name << " C" << std::endl;
+        circularBuffer = pvHistory[prec->name];
 
-    sum = std::accumulate((*circularBuffer).begin(), (*circularBuffer).end(), 0);
+    }
+
+    std::cout << "Data" << dataValue << std::endl;
+
+    std::cout << "Before push back" << std::endl;
+    circularBuffer->push_back(dataValue);
+
+    std::cout << "Before sum" << std::endl;
+    sum = std::accumulate(circularBuffer->begin(), circularBuffer->end(), 0);
+
+    std::cout << "Sum value " << sum << std::endl;
 
     /* Returns the first input value back */
-    *(long*) prec->vala = sum;
+    *(long*) prec->vala = 0;//sum;
+    *(long*) prec->valb = 0;
     return 0; /* process output links */
 }
