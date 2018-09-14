@@ -25,48 +25,61 @@ long parse_stability_impl(aSubRecord *prec)
 
     long dataValue = *(long*)prec->a, bufferLen = *(long*)prec->b, reset= *(long*)prec->c, sum=0;
 
-    std::cout << "Name " <<  prec->name << std::endl;
+    if (prec->fta != menuFtypeLONG)
+    {
+        errlogSevPrintf(errlogMajor, "%s incorrect argument type A", prec->name);
+        return 1;
+    }
+    if (prec->ftb != menuFtypeLONG)
+    {
+        errlogSevPrintf(errlogMajor, "%s incorrect argument type B", prec->name);
+        return 1;
+    }
+    if (prec->ftc != menuFtypeLONG)
+    {
+        errlogSevPrintf(errlogMajor, "%s incorrect argument type C", prec->name);
+        return 1;
+    }
 
     // Put type/value checking on input variables here
 
-    if ( pvHistory.find(prec->name) == pvHistory.end() ) {
-        /* This PV has not called the aSub function before. Initialise. */
+    try {
 
-        circularBuffer = new boost::circular_buffer<long>(bufferLen);
+        if ( pvHistory.find(prec->name) == pvHistory.end() ) {
+            // This PV has not called the aSub function before. Initialise.
 
-        pvHistory[prec->name] = circularBuffer;
+            circularBuffer = new boost::circular_buffer<long>(bufferLen);
+            pvHistory[prec->name] = circularBuffer;
 
-    } else if (reset != 0) {
-        // Replace the circular buffer in the map with a new, uninitialised one
+        } else if (reset != 0) {
+            // Replace the circular buffer in the map with a new, uninitialised one
 
-        std::cout << prec->name << " B" << std::endl;
+            circularBuffer = pvHistory[prec->name];
+            delete circularBuffer;
 
-        circularBuffer = new boost::circular_buffer<long>(bufferLen);
+            circularBuffer = new boost::circular_buffer<long>(bufferLen);
+            pvHistory[prec->name] = circularBuffer;
 
-        pvHistory[prec->name] = circularBuffer;
+        } else {
+            // Recall circularBuffer from the map
+            circularBuffer = pvHistory[prec->name];
+        }
+
+        // Add the new value to the circular buffer
+        circularBuffer->push_back(dataValue);
+        sum = std::accumulate(circularBuffer->begin(), circularBuffer->end(), 0);
+
+        // Return the summed value of the buffer
+        *(long*) prec->vala = sum;
+        *(long*) prec->valb = 0;
+    
+    }
+    catch (const std::exception& e) {
+        errlogSevPrintf(errlogMajor, "%s exception %s", prec->name, e.what());
 
     }
-
-    else {
-        // Recall circularBuffer from the map
-        std::cout << prec->name << " C" << std::endl;
-
-        circularBuffer = pvHistory[prec->name];
-
+    catch (...) {
+        errlogSevPrintf(errlogMajor, "%s unknown exception", prec->name);
     }
-
-    std::cout << "Data" << dataValue << std::endl;
-
-    std::cout << "Before push back" << std::endl;
-    circularBuffer->push_back(dataValue);
-
-    std::cout << "Before sum" << std::endl;
-    sum = std::accumulate(circularBuffer->begin(), circularBuffer->end(), 0);
-
-    std::cout << "Sum value " << sum << std::endl;
-
-    /* Returns the first input value back */
-    *(long*) prec->vala = sum;
-    *(long*) prec->valb = 0;
     return 0; /* process output links */
 }
