@@ -6,14 +6,14 @@
 record(waveform, "$(P)VOLT:CALC")
 {
     field(SCAN, "Passive")
-    field(NELM, "1000")
+    field(NELM, "$(NELM)")
     field(FTVL, "DOUBLE")
 }
 
 record(waveform, "$(P)CURR:CALC")
 {
     field(SCAN, "Passive")
-    field(NELM, "1000")
+    field(NELM, "$(NELM)")
     field(FTVL, "DOUBLE")
 }
 
@@ -22,37 +22,39 @@ record(waveform, "$(P)CURR:CALC")
 ##### need to be set by macros #####
 ####################################
 
-record(ai, "$(P)SAMPLETIME")
+record(calc, "$(P)SAMPLETIME")
 {
 
     field(SCAN, "Passive")
-    field(VAL, "1.0")
+    #field(VAL, "1.0")
+    field(CALC, "1.0/$(FREQ)")
+    field(PINI, "YES")
 }
 
 record(ai, "$(P)VOLT:UPPERLIM")
 {
 
     field(SCAN, "Passive")
-    field(VAL, "6.0")
+    field(VAL, "$(VUPPERLIM)")
 }
 
 record(ai, "$(P)VOLT:LOWERLIM")
 {
 
     field(SCAN, "Passive")
-    field(VAL, "4.0")
+    field(VAL, "$(VLOWERLIM)")
 }
 
 record(ai, "$(P)CURR:STEADY")
 {
     field(SCAN, "Passive")
-    field(VAL, "1.0")
+    field(VAL, "$(CSTEADY)")
 }
 
 record(ai, "$(P)CURR:LIMIT")
 {
     field(SCAN, "Passive")
-    field(VAL, "0.5")
+    field(VAL, "$(CLIMIT)")
 }
 
 ###################
@@ -63,7 +65,7 @@ record(acalcout, "$(P)_STABILITYCHECK")
 {
     field(DESC, "Finds number of samples outside limits")
     field(OOPT, "Every Time")
-    field(NELM, "1000")
+    field(NELM, "$(NELM)")
 
 
     # 0 if sample is within threshold, 1 if sample is outside threshold
@@ -71,8 +73,11 @@ record(acalcout, "$(P)_STABILITYCHECK")
     field(CALC, "SUM((A<AA)||(B>AA)||((C+D)<=BB))")
 
     # This will update on new voltage and current data. This may need revisiting to only update once.
-    field(INAA, "$(P)VOLT:CALC CP")
-    field(INBB, "$(P)CURR:CALC NPP")
+    #field(INAA, "$(P)VOLT:CALC CP")
+    #field(INBB, "$(P)CURR:CALC NPP")
+
+    field(INAA, "$(P)CALIBRATE:VOLT CP")
+    field(INBB, "$(P)CALIBRATE:CURR NPP")
 
     field(INPA, "$(P)VOLT:UPPERLIM NPP")
     field(INPB, "$(P)VOLT:LOWERLIM NPP")
@@ -103,7 +108,7 @@ record(calcout, "$(P)_ADDCOUNTS")
 #    field(SCAN, "Passive")
 #    field(OOPT, "Every Time")
 #
-#    field(NELM, "1000")
+#    field(NELM, "$(NELM)")
 #
 #    field(CALC, "SUM(AA)")
 #
@@ -203,16 +208,12 @@ record(aSub, "$(P)STABILITY:PARSE")
     field(FTVB, "LONG")
 }
 
-record(ai, "$(P)RESETWINDOW")
+record(bi, "$(P)RESETWINDOW")
 {
     field(DESC, "Resets the moving window")
     field(VAL, "0")
 }
-#record(ao, "$(P)TEMP")
-#{
-#    field(OUT, "$(P)STABILITY:PARSE")
-#}
-#
+
 record(ai, "$(P)WINDOWSIZE")
 {
     field(DESC, "Seconds in the moving window")
