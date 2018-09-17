@@ -1,60 +1,53 @@
-######################################
-##### These need to be replaced ######
-#### with updates from the device ####
-######################################
-
-record(waveform, "$(P)VOLT:CALC")
-{
-    field(SCAN, "Passive")
-    field(NELM, "$(NELM)")
-    field(FTVL, "DOUBLE")
-}
-
-record(waveform, "$(P)CURR:CALC")
-{
-    field(SCAN, "Passive")
-    field(NELM, "$(NELM)")
-    field(FTVL, "DOUBLE")
-}
-
 ####################################
 ## Stability boundary definitions ##
-##### need to be set by macros #####
 ####################################
 
 record(calc, "$(P)SAMPLETIME")
 {
-
+    field(DESC, "Holds sample time (1/freq)")
+    field(EGU, "S")
     field(SCAN, "Passive")
-    #field(VAL, "1.0")
     field(CALC, "1.0/$(FREQ)")
     field(PINI, "YES")
 }
 
 record(ai, "$(P)VOLT:UPPERLIM")
 {
-
+    field(DESC, "Upper voltage limit")
     field(SCAN, "Passive")
+    field(EGU, "kV")
     field(VAL, "$(VUPPERLIM)")
 }
 
 record(ai, "$(P)VOLT:LOWERLIM")
 {
-
+    field(DESC, "Lower voltage limit")
     field(SCAN, "Passive")
+    field(EGU, "kV")
     field(VAL, "$(VLOWERLIM)")
 }
 
 record(ai, "$(P)CURR:STEADY")
 {
+    field(DESC, "Nominal current value")
     field(SCAN, "Passive")
-    field(VAL, "$(CSTEADY)")
+    field(EGU, "mA")
+    field(VAL, "$(ISTEADY)")
 }
 
 record(ai, "$(P)CURR:LIMIT")
 {
+    field(DESC, "Maximum current deviation")
     field(SCAN, "Passive")
-    field(VAL, "$(CLIMIT)")
+    field(EGU, "mA")
+    field(VAL, "$(ILIMIT)")
+}
+
+
+record(ai, "$(P)WINDOWSIZE")
+{
+    field(DESC, "Seconds in the moving window")
+    field(VAL, "$(WINDOWSIZE)")
 }
 
 ###################
@@ -72,10 +65,7 @@ record(acalcout, "$(P)_STABILITYCHECK")
     # A is upper limit, B is lower limit, C + D is current threshold
     field(CALC, "SUM((A<AA)||(B>AA)||((C+D)<=BB))")
 
-    # This will update on new voltage and current data. This may need revisiting to only update once.
-    #field(INAA, "$(P)VOLT:CALC CP")
-    #field(INBB, "$(P)CURR:CALC NPP")
-
+    # Only update on new voltage (or current) data to avoid double counting
     field(INAA, "$(P)CALIBRATE:VOLT CP")
     field(INBB, "$(P)CALIBRATE:CURR NPP")
 
@@ -85,7 +75,6 @@ record(acalcout, "$(P)_STABILITYCHECK")
     field(INPD, "$(P)CURR:LIMIT NPP")
 
     field(FLNK, "$(P)_ADDCOUNTS")
-    #field(OUT, "$(P)_ADDCOUNTS PP")
 }
 
 record(calcout, "$(P)_ADDCOUNTS")
@@ -97,99 +86,42 @@ record(calcout, "$(P)_ADDCOUNTS")
 
     field(INPA, "$(P)_ADDCOUNTS")
     field(INPB, "$(P)_STABILITYCHECK")
-
-    #field(OUT, "$(P)_UNSTABLESAMPLES")
-    #field(OUT, "$(P)STABILITY:PARSE PP")
 }
-
-#record(acalcout, "$(P)_UNSTABLESAMPLES")
-#{
-#    field(DESC, "Counts samples out of stable region")
-#    field(SCAN, "Passive")
-#    field(OOPT, "Every Time")
-#
-#    field(NELM, "$(NELM)")
-#
-#    field(CALC, "SUM(AA)")
-#
-#    field(INAA, "$(P)_SAMPLEBUFFER NPP")
-#}
 
 record(ao, "$(P)_ZEROCOUNTER")
 {
+    field(DESC, "Resets the unstable point counter")
     field(SCAN, "Passive")
     field(VAL, "0")
     field(OUT, "$(P)_ADDCOUNTS")
 }
 
-#record(acalcout, "$(P)_RESETMOVINGAVG")
-#{
-#    field(DESC, "Resets the moving average")
-#    field(SCAN, "Passive")
-#    field(CALC, "ARR(0)")
-#    field(NELM, "1000")
-#    field(OOPT, "Every Time")
-#    field(DOPT, "Use CALC")
-#
-#    field(OUT, "$(P)_MOVINGBUFFER")
-#}
-
-#record(acalcout, "$(P)_RESETBUFFER")
-#{
-#    field(DESC, "Resets the buffer of samples")
-#    field(SCAN, "Passive")
-#    field(CALC, "ARR(0)")
-#    field(NELM, "1000")
-#    field(OOPT, "Every Time")
-#    field(DOPT, "Use CALC")
-#
-#    field(OUT, "$(P)_SAMPLEBUFFER PP")
-#}
-#
-#record(compress, "$(P)_MOVINGBUFFER")
-#{
-#    field(DESC, "Records time-binned stability")
-#    field(SCAN, "Passive")
-#    field(ALG, "Circular Buffer")
-#    field(NSAM, "600")
-#    field(INP, "$(P)_UNSTABLESAMPLES NPP")
-#
-#    field(FLNK, "$(P)STABILITY PP")
-#}
-
 record(fanout, "$(P)_COUNTERTIMING")
 {
+    field(DESC, "Add 1 second of data to buffer")
     field(SCAN, "1 second")
     field(LNK1, "$(P)STABILITY:PARSE PP")
-#    field(LNK1, "$(P)_MOVINGBUFFER PP")
-#    field(LNK2, "$(P)_RESETBUFFER PP")
-    field(LNK3, "$(P)_ZEROCOUNTER PP")
+    field(LNK2, "$(P)_ZEROCOUNTER PP")
 }
-
-#record(acalcout, "$(P)STABILITY")
-#{
-#    field(DESC, "Calculates instability in moving average")
-#    field(SCAN, "Passive")
-#
-#    field(CALC, "SUM(AA)*B")
-#
-#    field(INAA, "$(P)_MOVINGBUFFER CP ")
-#    field(INPB, "$(P)SAMPLETIME")
-#}
 
 record(calc, "$(P)STABILITY")
 {
+    field(DESC, "Moving window of unstable time")
+    field(EGU, "S")
     field(SCAN, "Passive")
     field(CALC, "A * B")
 
-    #field(INPA, "$(P)STABILITY:PARSE.OUTA")
     field(INPB, "$(P)SAMPLETIME CP")
+
+    info(alarm, "SEPRTR")
+    info(archive, "VAL")
+    info(INTEREST, "HIGH")
 }
 
 record(aSub, "$(P)STABILITY:PARSE")
 {
+    field(DESC, "Keeps circular buffer of data")
     field(SNAM, "parse_stability")
-#    field(SCAN, "1 second")
     field(PINI, "YES")
 
     field(INPA, "$(P)_ADDCOUNTS")
@@ -212,10 +144,4 @@ record(bi, "$(P)RESETWINDOW")
 {
     field(DESC, "Resets the moving window")
     field(VAL, "0")
-}
-
-record(ai, "$(P)WINDOWSIZE")
-{
-    field(DESC, "Seconds in the moving window")
-    field(VAL, "600")
 }

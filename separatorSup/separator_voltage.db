@@ -32,17 +32,6 @@ record(ai, "$(P)VOLT")
   info(archive, "VAL")
 }
 
-#record(calc, "$(P)CALIBRATE:VOLT")
-#{
-#    field(DESC, "Calibrates the voltage")
-#    # Recsim testing here because simulating a waveform and an I/O Intr is very
-#    # difficult. This is the deepest level that can be tested without
-#    # significant effort/restructuring
-#    field(INPA, "$(P)VOLT:DATA:_AVG CP MS")
-#    field(CALC, "A * $(PSU_MAX_VOLT) / 10")
-#    field(PREC, "5")
-#}
-
 record (acalcout, "$(P)VOLT:DATA:_AVG") {
   field(DESC, "Averages the voltage data")
   field(DTYP, "Soft Channel")
@@ -75,10 +64,6 @@ record(acalcout, "$(P)_APPLYVOLTCALIB")
   field(OUT, "$(P)CALIBRATE:VOLT PP")
   field(OEVT, "1")
 
-  #field(TPRO, "1")
-  #field(MDEL, "-1")
-  #field(ADEL, "-1")
-
 }
 
 record(waveform, "$(P)CALIBRATE:VOLT") {
@@ -90,9 +75,7 @@ record(waveform, "$(P)CALIBRATE:VOLT") {
 record(waveform, "$(DAQMX)VOLT:_RAW")
 {
   $(IFNOTRECSIM) field(SCAN,"I/O Intr")
-  #field(SCAN,  ".5 second")
-  #field(SCAN,".5 second")
-  #field(PINI, "NO")
+  $(IFNOTRECSIM)  field(PINI, "NO")
   $(IFNOTRECSIM)  field(DTYP, "asynFloat64ArrayIn")
   $(IFRECSIM) field(DTYP, "Soft Channel")
   field(PREC, "5")
@@ -104,7 +87,6 @@ record(waveform, "$(DAQMX)VOLT:_RAW")
   field(SIOL, "$(DAQMX)VOLT:WV:SIM")
   field(FLNK, "$(P)_APPLYVOLTCALIB")
   field(SDIS, "$(P)DISABLE")
-  #field(TPRO, "1")
 }
 
 record(waveform,  "$(DAQMX)VOLT:WV:SIM")

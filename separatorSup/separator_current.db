@@ -9,29 +9,16 @@ record(ai, "$(P)CURR")
   field(HSV,  "MINOR")
   field(LSV,  "MINOR")
   field(DTYP, "Soft Channel")
-  #field(INP,  "$(P)CALIBRATE:CURR CP MS") # input from DATA array
-  field(INP,  "$(P)CURR:DATA:_AVG CP MS")
+  field(INP,  "$(P)CURR:DATA:_AVG CP MS") # input from DATA array
   field(PREC, "5")
   info(INTEREST, "HIGH")
   info(archive, "VAL")
 }
 
-#record(calc, "$(P)CALIBRATE:CURR")
-#{
-#    field(DESC, "Calibrates the current")
-#    # Recsim testing here because simulating a waveform and an I/O Intr is very
-#    # difficult. This is the deepest level that can be tested without
-#    # significant effort/restructuring
-#    field(INPA, "$(P)CURR:DATA:_AVG CP MS")
-#    field(CALC, "A * $(PSU_MAX_CURR) / 10")
-#    field(PREC, "5")
-#}
-
 record (acalcout, "$(P)CURR:DATA:_AVG") {
   field(DESC, "Averages the current data")
   field(DTYP, "Soft Channel")
   field(NELM, "$(NELM)")
-  #field(INAA, "$(DAQMX)CURR:_RAW CP MS")
   field(INAA, "$(P)CALIBRATE:CURR CP MS")
 
   field(CALC, "AVG(AA)")
@@ -53,7 +40,6 @@ record(acalcout, "$(P)_APPLYCURRCALIB")
   field(OOPT, "Every Time")
   field(NELM, "$(NELM)")
 
-  #field(CALC, "AA * $(PSU_MAX_CURR)/10")
   field(CALC, "B * AA")
 
   field(INAA, "$(P)DAQ:CURR:_RAW")
@@ -72,7 +58,7 @@ record(waveform, "$(P)CALIBRATE:CURR") {
 record(waveform, "$(DAQMX)CURR:_RAW")
 {
   $(IFNOTRECSIM) field(SCAN,"I/O Intr")
-  #field(PINI, "NO")
+  $(IFNOTRECSIM) field(PINI, "NO")
   $(IFNOTRECSIM)  field(DTYP, "asynFloat64ArrayIn")
   $(IFRECSIM) field(DTYP, "Soft Channel")
   field(PREC, "5")
@@ -85,7 +71,6 @@ record(waveform, "$(DAQMX)CURR:_RAW")
   field(SDIS, "$(P)DISABLE")
   field(FLNK, "$(P)_APPLYCURRCALIB")
 }
-
 
 record(calcout, "$(DAQMX)CURR:ACQUIRE:_TRIG")
 {
