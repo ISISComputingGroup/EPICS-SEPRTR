@@ -21,20 +21,20 @@ record(calc, "$(P)CALIBRATE:CURR")
     # Recsim testing here because simulating a waveform and an I/O Intr is very
     # difficult. This is the deepest level that can be tested without
     # significant effort/restructuring
-    field(INPA, "$(P)CURR:DATA:_AVG CP MS")
+    field(INPA, "$(DAQMX):CURR:DATA CP MS")
     field(CALC, "A * $(PSU_MAX_CURR) / 10")
     field(PREC, "5")
 }
 
-record (acalcout, "$(P)CURR:DATA:_AVG") {
-  field(DESC, "Averages the RAW data array")
+record(subArray, "$(DAQMX):CURR:DATA")
+{
+  field(PINI, "NO")
   field(DTYP, "Soft Channel")
-  field(NELM, "$(CURR_NELM)")
-  field(INAA, "$(DAQMX):CURR:_RAW CP MS")
-
-  field(CALC, "AVG(AA)")
-  field(OOPT, "Every Time")
-  field(DOPT, "Use CALC")
+  field(PREC, "5")
+  field(INP, "$(DAQMX):CURR:_RAW CP MS")
+  field(NELM, "1") # 1 Element
+  field(INDX, "0")
+  field(FTVL, "DOUBLE")
 }
 
 record(waveform, "$(DAQMX):CURR:_RAW")
@@ -45,40 +45,47 @@ record(waveform, "$(DAQMX):CURR:_RAW")
   $(IFRECSIM) field(DTYP, "Soft Channel")
   field(PREC, "5")
   field(INP, "@asyn(R0 3 5.0) DATA")
-  field(NELM, "$(CURR_NELM)")
+  field(NELM, "$(NELM)")
   field(FTVL, "DOUBLE")
   field(EVNT, "1")
   field(SIML, "$(P)SIM")
   field(SIOL, "$(DAQMX):CURR:WV:SIM CP")
   field(SDIS, "$(P)DISABLE")
-  field(FLNK, "$(DAQMX):CURR:CALC")
 }
-
-
-## Explain this logic
-
-
-record(calcout, "$(DAQMX):CURR:ACQUIRE:_TRIG")
-{
-  field(INPA, "$(DAQMX):CURR:ACQUIRE.VAL CP MS")
-  field(CALC, "!A")
-  field(OUT, "$(DAQMX):CURR:ACQUIRE.VAL PP")
-  field(OOPT, "When Non-zero")
-}
-
-record(longout, "$(DAQMX):CURR:ACQUIRE")
-{
-  field(SCAN, "1 second")
-  field(DTYP, "asynUInt32Digital")
-  field(OUT, "@asynMask(R0 3 0x01) ACQUIRE")
-  field(SDIS, "$(P)DISABLE")
-}
-
-## SIM records
 
 record(waveform,  "$(DAQMX):CURR:WV:SIM")
 {
   field(DESC,  "Current simulation")
-  field(NELM,  "$(CURR_NELM)")
+  field(NELM,  "1")
   field(FTVL,  "DOUBLE")
+}
+
+record(acalcout, "$(DAQMX):CURR:CALC:SIM")
+{
+  field(DESC, "Converts current to waveform")
+  field(INPA, "$(DAQMX):CURR:SIM CP")
+  field(CALC, "ARR(A)")
+  field(OOPT, "Every Time")
+  field(OUT, "$(DAQMX):CURR:WV:SIM PP")
+  field(DOPT, "Use CALC")
+}
+
+# :ACQUIRE needs triggering and PINI, "YES" doesn't work on that record
+record(calcout, "$(DAQMX):CURR:ACQUIRE:_TRIG") {
+  field(PINI,  "YES")
+  field(DESC,  "Startes the acquire task")
+  field(INPA,  "1")
+  field(CALC,  "a")
+  field(OUT,  "$(DAQMX):CURR:ACQUIRE PP")
+}
+
+record(bo, "$(DAQMX):CURR:ACQUIRE")
+{
+  field(SCAN,  "Passive")
+  field(DTYP, "asynUInt32Digital")
+  field(OUT, "@asynMask(R0 0 0x01) ACQUIRE")
+  field(SDIS, "$(P)DISABLE")
+  field(ZNAM, "stop")
+  field(ONAM, "run")
+  field(TPRO,  "1")
 }

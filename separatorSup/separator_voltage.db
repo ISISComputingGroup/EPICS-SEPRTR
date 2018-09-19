@@ -20,7 +20,7 @@ record(bo, "$(P)DISABLE")
 record(ai, "$(P)VOLT")
 {
   field(DESC, "Voltage")
-  field(EGU,  "kV")
+  field(EGU, "kV")
   field(HIGH, "$(PSU_MAX_VOLT)")
   field(LOW,  "0")
   field(HSV,  "MINOR")
@@ -35,80 +35,57 @@ record(ai, "$(P)VOLT")
 record(calc, "$(P)CALIBRATE:VOLT")
 {
     field(DESC, "Calibrates the voltage")
-    # Recsim testing here because simulating a waveform and an I/O Intr is very
-    # difficult. This is the deepest level that can be tested without
-    # significant effort/restructuring
-    field(INPA, "$(P)VOLT:DATA:_AVG CP MS")
+    field(INPA, "$(DAQMX):VOLT:DATA CP MS")
     field(CALC, "A * $(PSU_MAX_VOLT) / 10")
     field(PREC, "5")
 }
 
-record (acalcout, "$(P)VOLT:DATA:_AVG") {
-  field(DESC, "Averages the RAW data array")
+record(subArray, "$(DAQMX):VOLT:DATA")
+{
+  field(PINI, "NO")
   field(DTYP, "Soft Channel")
-  field(NELM, "$(VOLT_NELM)")
-  field(INAA, "$(DAQMX):VOLT:_RAW CP MS")
-
-  field(CALC, "AVG(AA)")
-  field(OOPT, "Every Time")
-  field(DOPT, "Use CALC")
+  field(PREC, "5")
+  field(INP, "$(DAQMX):VOLT:_RAW CP MS")
+  field(NELM, "1") # 1 Element
+  field(INDX, "0")
+  field(FTVL, "DOUBLE")
 }
 
 record(waveform, "$(DAQMX):VOLT:_RAW")
 {
   $(IFNOTRECSIM) field(SCAN,"I/O Intr")
-  #field(SCAN,  ".5 second")
-  #field(SCAN,".5 second")
   field(PINI, "NO")
   $(IFNOTRECSIM)  field(DTYP, "asynFloat64ArrayIn")
   $(IFRECSIM) field(DTYP, "Soft Channel")
   field(PREC, "5")
   field(INP, "@asyn(R0 2 5.0) DATA")
-  field(NELM, "$(VOLT_NELM)")
+  field(NELM, "$(NELM)")
   field(FTVL, "DOUBLE")
   field(EVNT, "1")
   field(SIML, "$(P)SIM")
   field(SIOL, "$(DAQMX):VOLT:WV:SIM CP")
-  field(FLNK, "$(DAQMX):VOLT:CALC")
   field(SDIS, "$(P)DISABLE")
 }
 
 record(waveform,  "$(DAQMX):VOLT:WV:SIM")
 {
-  field(DESC,  "Voltage simulation")
-  field(NELM,  "$(VOLT_NELM)")
+  field(DESC,  "Array of voltage simulation")
+  field(NELM,  "100")
   field(FTVL,  "DOUBLE")
 }
 
-record(acalcout, "$(DAQMX):SIM:CALC")
+record(acalcout, "$(DAQMX):VOLT:CALC:SIM")
 {
   field(DESC, "Converts voltage to waveform")
   field(INPA, "$(DAQMX):VOLT:SIM CP")
   field(CALC, "ARR(A)")
-  field(NELM, "$(VOLT_NELM)")
+  field(NELM, "100")
 
   field(OOPT, "Every Time")
   field(OUT, "$(DAQMX):VOLT:WV:SIM PP")
   field(DOPT, "Use CALC")
 }
 
-## TRIGGER records
-
-record(calcout, "$(DAQMX):VOLT:ACQUIRE:_TRIG")
-{
-  field(INPA, "$(DAQMX):VOLT:ACQUIRE.VAL CP MS")
-  field(CALC, "!A")
-  field(OUT, "$(DAQMX):VOLT:ACQUIRE.VAL PP")
-  field(OOPT, "When Non-zero")
-}
-
-record(longout, "$(DAQMX):VOLT:ACQUIRE")
-{
-  field(SCAN, ".5 second")
-  field(DTYP, "asynUInt32Digital")
-  field(OUT, "@asynMask(R0 2 0x01) ACQUIRE")
-  field(SDIS, "$(P)DISABLE")
-}
 
 ####################################
 ####### Setting the voltage ########
