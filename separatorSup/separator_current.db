@@ -19,6 +19,7 @@ record (acalcout, "$(P)CURR:DATA:_AVG") {
   field(DESC, "Averages the current data")
   field(DTYP, "Soft Channel")
   field(NELM, "$(NELM)")
+  field(PREC, "5")
   field(INAA, "$(P)CALIBRATE:CURR CP MS")
 
   field(CALC, "AVG(AA)")
@@ -31,6 +32,7 @@ record(calc, "$(P)_CURRCALIBCONST")
     field(DESC, "Holds DAQ to Amps calibration constant")
     field(CALC, "$(PSU_MAX_CURR)/10")
     field(PINI, "YES")
+    field(PREC, "5")
 }
 
 record(acalcout, "$(P)_APPLYCURRCALIB")
@@ -39,6 +41,7 @@ record(acalcout, "$(P)_APPLYCURRCALIB")
   field(DTYP, "Soft Channel")
   field(OOPT, "Every Time")
   field(NELM, "$(NELM)")
+  field(PREC, "5")
 
   field(CALC, "B * AA")
 

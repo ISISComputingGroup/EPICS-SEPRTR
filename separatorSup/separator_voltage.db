@@ -48,6 +48,7 @@ record(calc, "$(P)_VOLTCALIBCONST")
     field(DESC, "Holds DAQ to Volts calibration constant")
     field(CALC, "$(PSU_MAX_VOLT)/10")
     field(PINI, "YES")
+    field(PREC, "5")
 }
 
 record(acalcout, "$(P)_APPLYVOLTCALIB")
@@ -56,6 +57,8 @@ record(acalcout, "$(P)_APPLYVOLTCALIB")
   field(DTYP, "Soft Channel")
   field(OOPT, "Every Time")
   field(NELM, "$(NELM)")
+
+  field(PREC, "5")
 
   field(CALC, "B * AA")
   field(INAA, "$(P)DAQ:VOLT:_RAW")
@@ -70,6 +73,7 @@ record(waveform, "$(P)CALIBRATE:VOLT") {
   field(DESC, "Holds calibrated voltage data")
   field(NELM, "$(NELM)")
   field(DTYP, "Soft Channel")
+  field(PREC, "5")
 }
 
 record(waveform, "$(DAQMX)VOLT:_RAW")
