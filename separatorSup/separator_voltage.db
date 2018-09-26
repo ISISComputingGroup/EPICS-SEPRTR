@@ -84,7 +84,7 @@ record(ao, "$(P)VOLT:SP")
   field(DRVL,  "0")
   field(SCAN, "Passive")
   field(DTYP, "Soft Channel")
-  field(PREC, "2")
+  field(PREC, "5")
 }
 
 record(calcout, "$(P)CALIBRATE:VOLT:SP")
