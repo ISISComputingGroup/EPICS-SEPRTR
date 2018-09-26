@@ -21,23 +21,23 @@ record(calc, "$(P)CALIBRATE:CURR")
     # Recsim testing here because simulating a waveform and an I/O Intr is very
     # difficult. This is the deepest level that can be tested without
     # significant effort/restructuring
-    field(INPA, "$(DAQMX):CURR:DATA CP MS")
+    field(INPA, "$(P)DAQ:CURR:DATA CP MS")
     field(CALC, "A * $(PSU_MAX_CURR) / 10")
     field(PREC, "5")
 }
 
-record(subArray, "$(DAQMX):CURR:DATA")
+record(subArray, "$(P)DAQ:CURR:DATA")
 {
   field(PINI, "NO")
   field(DTYP, "Soft Channel")
   field(PREC, "5")
-  field(INP, "$(DAQMX):CURR:_RAW CP MS")
+  field(INP, "$(P)DAQ:CURR:_RAW CP MS")
   field(NELM, "1") # 1 Element
   field(INDX, "0")
   field(FTVL, "DOUBLE")
 }
 
-record(waveform, "$(DAQMX):CURR:_RAW")
+record(waveform, "$(P)DAQ:CURR:_RAW")
 {
   $(IFNOTRECSIM) field(SCAN,"I/O Intr")
   field(PINI, "NO")
@@ -49,23 +49,23 @@ record(waveform, "$(DAQMX):CURR:_RAW")
   field(FTVL, "DOUBLE")
   field(EVNT, "1")
   field(SIML, "$(P)SIM")
-  field(SIOL, "$(DAQMX):CURR:WV:SIM CP")
+  field(SIOL, "$(P)DAQ:CURR:WV:SIM CP")
   field(SDIS, "$(P)DISABLE")
 }
 
-record(waveform,  "$(DAQMX):CURR:WV:SIM")
+record(waveform,  "$(P)DAQ:CURR:WV:SIM")
 {
   field(DESC,  "Current simulation")
   field(NELM,  "1")
   field(FTVL,  "DOUBLE")
 }
 
-record(acalcout, "$(DAQMX):CURR:CALC:SIM")
+record(acalcout, "$(P)DAQ:CURR:CALC:SIM")
 {
   field(DESC, "Converts current to waveform")
-  field(INPA, "$(DAQMX):CURR:SIM CP")
+  field(INPA, "$(P)DAQ:CURR:SIM CP")
   field(CALC, "ARR(A)")
   field(OOPT, "Every Time")
-  field(OUT, "$(DAQMX):CURR:WV:SIM PP")
+  field(OUT, "$(P)DAQ:CURR:WV:SIM PP")
   field(DOPT, "Use CALC")
 }
