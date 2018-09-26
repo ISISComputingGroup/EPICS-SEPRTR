@@ -4,8 +4,8 @@ record(ai, "$(P)CURR")
 {
   field(DESC, "Current")
   field(EGU, "mA")
-  field(HIGH,  "2.6") # Magic number is DAQ max with small tolerance
-  field(LOW,  "-0.1") # Magic number is DAQ min with small tolernace
+  field(HIGH,  "2.6") # Magic number is DAQ max with small tolerance after calibration
+  field(LOW,  "-0.1") # Magic number is DAQ min with small tolerance after calibration
   field(HSV,  "MINOR")
   field(LSV,  "MINOR")
   field(DTYP, "Soft Channel")
