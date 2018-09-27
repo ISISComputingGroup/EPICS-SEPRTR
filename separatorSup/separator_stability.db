@@ -147,9 +147,6 @@ record(calc, "$(P)STABILITY")
 
     field(LOW, "0.5")
     field(LSV, "MAJOR")
-    #info(alarm, "SEPRTR")
-    #info(archive, "VAL")
-    #info(INTEREST, "HIGH")
 }
 
 record(aSub, "$(P)STABILITY:PARSE")
