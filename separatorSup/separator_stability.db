@@ -9,6 +9,7 @@ record(calc, "$(P)SAMPLETIME")
     field(SCAN, "Passive")
     field(CALC, "1.0/$(FREQ)")
     field(PINI, "YES")
+    field(PREC, "5")
 }
 
 record(ai, "$(P)VOLT:UPPERLIM")
@@ -17,6 +18,7 @@ record(ai, "$(P)VOLT:UPPERLIM")
     field(SCAN, "Passive")
     field(EGU, "kV")
     field(VAL, "$(VUPPERLIM)")
+    field(PREC, "5")
 }
 
 record(ai, "$(P)VOLT:LOWERLIM")
@@ -25,6 +27,7 @@ record(ai, "$(P)VOLT:LOWERLIM")
     field(SCAN, "Passive")
     field(EGU, "kV")
     field(VAL, "$(VLOWERLIM)")
+    field(PREC, "5")
 }
 
 record(ai, "$(P)CURR:STEADY")
@@ -33,6 +36,7 @@ record(ai, "$(P)CURR:STEADY")
     field(SCAN, "Passive")
     field(EGU, "mA")
     field(VAL, "$(ISTEADY)")
+    field(PREC, "5")
 }
 
 record(ai, "$(P)CURR:LIMIT")
@@ -41,13 +45,22 @@ record(ai, "$(P)CURR:LIMIT")
     field(SCAN, "Passive")
     field(EGU, "mA")
     field(VAL, "$(ILIMIT)")
+    field(PREC, "5")
 }
-
 
 record(ai, "$(P)WINDOWSIZE")
 {
     field(DESC, "Seconds in the moving window")
     field(VAL, "$(WINDOWSIZE)")
+    field(PREC, "5")
+    field(EGU, "S")
+}
+
+record(ai, "$(P)THRESHOLD")
+{
+    field(DESC,  "Total allowed time out of stability")
+    field(VAL, "$(MAXUNSTBL)")
+    field(PREC, "5")
 }
 
 ###################
@@ -104,18 +117,39 @@ record(fanout, "$(P)_COUNTERTIMING")
     field(LNK2, "$(P)_ZEROCOUNTER PP")
 }
 
-record(calc, "$(P)STABILITY")
+record(calc, "$(P)UNSTABLETIME")
 {
     field(DESC, "Moving window of unstable time")
     field(EGU, "S")
     field(SCAN, "Passive")
     field(CALC, "A * B")
 
+    # Input A written by aSub record
     field(INPB, "$(P)SAMPLETIME CP")
+
+    field(HIGH, "$(MAXUNSTBL)")
+    field(HSV, "MAJOR")
 
     info(alarm, "SEPRTR")
     info(archive, "VAL")
     info(INTEREST, "HIGH")
+}
+
+record(calc, "$(P)STABILITY")
+{
+    field(DESC, "1 if stable, 0 otherwise")
+    field(EGU, "S")
+    field(SCAN, "Passive")
+    field(CALC, "A < B")
+
+    field(INPA, "$(P)UNSTABLETIME CP MS")
+    field(INPB, "$(P)THRESHOLD")
+
+    field(LOW, "0.5")
+    field(LSV, "MAJOR")
+    #info(alarm, "SEPRTR")
+    #info(archive, "VAL")
+    #info(INTEREST, "HIGH")
 }
 
 record(aSub, "$(P)STABILITY:PARSE")
@@ -133,7 +167,7 @@ record(aSub, "$(P)STABILITY:PARSE")
     field(INPC, "$(P)RESETWINDOW CP")
     field(FTC, "LONG")
 
-    field(OUTA, "$(P)STABILITY.A PP")
+    field(OUTA, "$(P)UNSTABLETIME.A PP")
     field(FTVA, "LONG")
 
     field(OUTB, "$(P)RESETWINDOW PP")
