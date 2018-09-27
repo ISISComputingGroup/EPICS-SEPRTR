@@ -5,14 +5,16 @@
 record(ai, "$(P)VOLT")
 {
   field(DESC, "Voltage")
-  field(EGU, "kV")
-  field(HIGH, "$(PSU_MAX_VOLT)")
-  field(LOW,  "-0.5") # Magic number is DAQ min with small tolerance after calibration
-  field(HSV,  "MINOR")
-  field(LSV,  "MINOR")
   field(DTYP, "Soft Channel")
   field(INP,  "$(P)CALIBRATE:VOLT CP MS")
   field(PREC, "5")
+    field(EGU, "kV")
+  
+  field(HIHI, "$(PSU_MAX_VOLT)")
+  field(LOLO,  "0")
+  field(HHSV,  "MAJOR")
+  field(LLSV,  "MAJOR")
+  
   info(INTEREST, "HIGH")
   info(archive, "VAL")
 }

@@ -3,14 +3,16 @@
 record(ai, "$(P)CURR")
 {
   field(DESC, "Current")
-  field(EGU, "mA")
-  field(HIGH,  "2.6") # Magic number is DAQ max with small tolerance after calibration
-  field(LOW,  "-0.1") # Magic number is DAQ min with small tolerance after calibration
-  field(HSV,  "MINOR")
-  field(LSV,  "MINOR")
   field(DTYP, "Soft Channel")
-  field(INP,  "$(P)CALIBRATE:CURR CP MS") # input from DATA array
+  field(INP,  "$(P)CALIBRATE:CURR CP MS")
   field(PREC, "5")
+  field(EGU, "mA")
+  
+  field(HIHI, "$(PSU_MAX_CURR)")
+  field(LOLO,  "0")
+  field(HHSV,  "MAJOR")
+  field(LLSV,  "MAJOR")
+  
   info(INTEREST, "HIGH")
   info(archive, "VAL")
 }
@@ -18,9 +20,6 @@ record(ai, "$(P)CURR")
 record(calc, "$(P)CALIBRATE:CURR")
 {
     field(DESC, "Calibrates the current")
-    # Recsim testing here because simulating a waveform and an I/O Intr is very
-    # difficult. This is the deepest level that can be tested without
-    # significant effort/restructuring
     field(INPA, "$(P)DAQ:CURR:DATA CP MS")
     field(CALC, "A * $(PSU_MAX_CURR) / 10")
     field(PREC, "5")
@@ -32,10 +31,14 @@ record(subArray, "$(P)DAQ:CURR:DATA")
   field(DTYP, "Soft Channel")
   field(PREC, "5")
   field(INP, "$(P)DAQ:CURR:_RAW CP MS")
-  field(NELM, "1") # 1 Element
+  field(NELM, "1")
   field(INDX, "0")
   field(FTVL, "DOUBLE")
 }
+
+# RECSIM testing here because simulating a waveform and an I/O Intr is very
+# difficult. This is the deepest level that can be tested without
+# significant effort/restructuring
 
 record(waveform, "$(P)DAQ:CURR:_RAW")
 {
@@ -56,16 +59,6 @@ record(waveform, "$(P)DAQ:CURR:_RAW")
 record(waveform,  "$(P)DAQ:CURR:WV:SIM")
 {
   field(DESC,  "Current simulation")
-  field(NELM,  "1")
+  field(NELM,  "1000")
   field(FTVL,  "DOUBLE")
-}
-
-record(acalcout, "$(P)DAQ:CURR:CALC:SIM")
-{
-  field(DESC, "Converts current to waveform")
-  field(INPA, "$(P)DAQ:CURR:SIM CP")
-  field(CALC, "ARR(A)")
-  field(OOPT, "Every Time")
-  field(OUT, "$(P)DAQ:CURR:WV:SIM PP")
-  field(DOPT, "Use CALC")
 }
