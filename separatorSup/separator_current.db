@@ -9,7 +9,7 @@ record(ai, "$(P)CURR")
   field(HSV,  "MINOR")
   field(LSV,  "MINOR")
   field(DTYP, "Soft Channel")
-  field(INP,  "$(P)CURR:DATA:_AVG CP MS") # input from DATA array
+  field(INP,  "$(P)CALIBRATE:CURR CP MS") # input from DATA array
   field(PREC, "5")
   info(INTEREST, "HIGH")
   info(archive, "VAL")
@@ -46,7 +46,7 @@ record(acalcout, "$(P)_APPLYCURRCALIB")
   field(CALC, "B * AA")
 
   field(INAA, "$(P)DAQ:CURR:_RAW")
-  field(INPB, "$(P)_CURRCALIBCONST")
+  field(INPB, "$(P)_CURRCALIBCONST NPP")
 
   field(OUT, "$(P)CALIBRATE:CURR PP")
   field(OEVT, "1")
@@ -56,9 +56,10 @@ record(waveform, "$(P)CALIBRATE:CURR") {
   field(DESC, "Holds calibrated current data")
   field(NELM, "$(NELM)")
   field(DTYP, "Soft Channel")
+  field(PREC, "5")
 }
 
-record(waveform, "$(DAQMX)CURR:_RAW")
+record(waveform, "$(P)DAQ:CURR:_RAW")
 {
   $(IFNOTRECSIM) field(SCAN,"I/O Intr")
   $(IFNOTRECSIM) field(PINI, "NO")
@@ -70,20 +71,20 @@ record(waveform, "$(DAQMX)CURR:_RAW")
   field(FTVL, "DOUBLE")
   field(EVNT, "1")
   field(SIML, "$(P)SIM")
-  field(SIOL, "$(DAQMX)CURR:WV:SIM")
+  field(SIOL, "$(P)DAQ:CURR:WV:SIM")
   field(SDIS, "$(P)DISABLE")
   field(FLNK, "$(P)_APPLYCURRCALIB")
 }
 
-record(calcout, "$(DAQMX)CURR:ACQUIRE:_TRIG")
+record(calcout, "$(P)DAQ:CURR:ACQUIRE:_TRIG")
 {
-  field(INPA, "$(DAQMX)CURR:ACQUIRE.VAL CP MS")
+  field(INPA, "$(P)DAQ:CURR:ACQUIRE.VAL CP MS")
   field(CALC, "!A")
-  field(OUT, "$(DAQMX)CURR:ACQUIRE.VAL PP")
+  field(OUT, "$(P)DAQ:CURR:ACQUIRE.VAL PP")
   field(OOPT, "When Non-zero")
 }
 
-record(longout, "$(DAQMX)CURR:ACQUIRE")
+record(longout, "$(P)DAQ:CURR:ACQUIRE")
 {
   field(SCAN, "1 second")
   field(DTYP, "asynUInt32Digital")
@@ -93,10 +94,11 @@ record(longout, "$(DAQMX)CURR:ACQUIRE")
 
 ## SIM records
 
-record(waveform,  "$(DAQMX)CURR:WV:SIM")
+record(waveform,  "$(P)DAQ:CURR:WV:SIM")
 {
   field(DESC,  "Current simulation")
   field(NELM,  "$(NELM)")
   field(FTVL,  "DOUBLE")
   field(FLNK, "$(P)DAQ:CURR:_RAW")
+  field(PREC, "5")
 }

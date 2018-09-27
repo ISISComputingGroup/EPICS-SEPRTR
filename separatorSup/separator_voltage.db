@@ -36,7 +36,7 @@ record (acalcout, "$(P)VOLT:DATA:_AVG") {
   field(DESC, "Averages the voltage data")
   field(DTYP, "Soft Channel")
   field(NELM, "$(NELM)")
-  field(INAA, "$(DAQMX)VOLT:_RAW CP MS")
+  field(INAA, "$(P)DAQ:VOLT:_RAW CP MS")
 
   field(CALC, "AVG(AA)")
   field(OOPT, "Every Time")
@@ -76,7 +76,7 @@ record(waveform, "$(P)CALIBRATE:VOLT") {
   field(PREC, "5")
 }
 
-record(waveform, "$(DAQMX)VOLT:_RAW")
+record(waveform, "$(P)DAQ:VOLT:_RAW")
 {
   $(IFNOTRECSIM) field(SCAN,"I/O Intr")
   $(IFNOTRECSIM)  field(PINI, "NO")
@@ -88,12 +88,12 @@ record(waveform, "$(DAQMX)VOLT:_RAW")
   field(FTVL, "DOUBLE")
   field(EVNT, "1")
   field(SIML, "$(P)SIM")
-  field(SIOL, "$(DAQMX)VOLT:WV:SIM")
+  field(SIOL, "$(P)DAQ:VOLT:WV:SIM")
   field(FLNK, "$(P)_APPLYVOLTCALIB")
   field(SDIS, "$(P)DISABLE")
 }
 
-record(waveform,  "$(DAQMX)VOLT:WV:SIM")
+record(waveform,  "$(P)DAQ:VOLT:WV:SIM")
 {
   field(DESC,  "Voltage simulation")
   field(NELM,  "$(NELM)")
@@ -101,29 +101,29 @@ record(waveform,  "$(DAQMX)VOLT:WV:SIM")
   field(FLNK, "$(P)DAQ:VOLT:_RAW")
 }
 
-record(acalcout, "$(DAQMX)SIM:CALC")
+record(acalcout, "$(P)DAQ:SIM:CALC")
 {
   field(DESC, "Converts voltage to waveform")
-  field(INPA, "$(DAQMX)VOLT:SIM CP")
+  field(INPA, "$(P)DAQ:VOLT:SIM CP")
   field(CALC, "ARR(A)")
   field(NELM, "$(NELM)")
 
   field(OOPT, "Every Time")
-  field(OUT, "$(DAQMX)VOLT:WV:SIM PP")
+  field(OUT, "$(P)DAQ:VOLT:WV:SIM PP")
   field(DOPT, "Use CALC")
 }
 
 ## TRIGGER records
 
-record(calcout, "$(DAQMX)VOLT:ACQUIRE:_TRIG")
+record(calcout, "$(P)DAQ:VOLT:ACQUIRE:_TRIG")
 {
-  field(INPA, "$(DAQMX)VOLT:ACQUIRE.VAL CP MS")
+  field(INPA, "$(P)DAQ:VOLT:ACQUIRE.VAL CP MS")
   field(CALC, "!A")
-  field(OUT, "$(DAQMX)VOLT:ACQUIRE.VAL PP")
+  field(OUT, "$(P)DAQ:VOLT:ACQUIRE.VAL PP")
   field(OOPT, "When Non-zero")
 }
 
-record(longout, "$(DAQMX)VOLT:ACQUIRE")
+record(longout, "$(P)DAQ:VOLT:ACQUIRE")
 {
   field(SCAN, ".5 second")
   field(DTYP, "asynUInt32Digital")
@@ -153,23 +153,23 @@ record(calcout, "$(P)CALIBRATE:VOLT:SP")
   field(INPA, "$(P)VOLT:SP CP MS")
   field(CALC, "(A * 10) / $(PSU_MAX_VOLT)")
   field(PREC, "5")
-  field(OUT, "$(DAQMX)VOLT:SP:DATA PP")
+  field(OUT, "$(P)DAQ:VOLT:SP:DATA PP")
 }
 
-record(ao, "$(DAQMX)VOLT:SP:DATA")
+record(ao, "$(P)DAQ:VOLT:SP:DATA")
 {
   $(IFNOTRECSIM)  field(DTYP, "asynFloat64")
   $(IFRECSIM) field(DTYP, "Soft Channel")
   field(OUT, "@asyn(W0, 2, 5.0) DATA")
   field(PREC, "5")
   field(SIML, "$(P)SIM")
-  field(SIOL, "$(DAQMX)VOLT:SIM")
+  field(SIOL, "$(P)DAQ:VOLT:SIM")
   field(SDIS, "$(P)DISABLE")
 }
 
-record(ai, "$(DAQMX)VOLT:SIM")
+record(ai, "$(P)DAQ:VOLT:SIM")
 {
-  field(INP, "$(DAQMX)VOLT:SP:DATA CP")
+  field(INP, "$(P)DAQ:VOLT:SP:DATA CP")
   field(DESC, "Device voltage")
   field(DTYP, "Soft Channel")
   field(PREC, "5")
