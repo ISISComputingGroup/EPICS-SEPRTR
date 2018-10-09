@@ -158,7 +158,6 @@ record(ao, "$(P)DAQ:VOLT:SP")
 
 record(ai, "$(P)DAQ:VOLT:SIM")
 {
-  #field(INP, "$(P)DAQ:VOLT:SP")
   field(DESC, "Device voltage")
   field(DTYP, "Soft Channel")
   field(PREC, "5")
