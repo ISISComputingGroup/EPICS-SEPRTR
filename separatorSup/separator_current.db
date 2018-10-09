@@ -6,25 +6,13 @@ record(ai, "$(P)CURR")
   field(EGU, "mA")
   field(HIGH,  "2.6") # Magic number is DAQ max with small tolerance
   field(LOW,  "-0.1") # Magic number is DAQ min with small tolernace
-  field(HSV,  "MINOR")
-  field(LSV,  "MINOR")
+  field(HSV,  "MAJOR")
+  field(LSV,  "MAJOR")
   field(DTYP, "Soft Channel")
   field(INP,  "$(P)CALIBRATE:CURR CP MS") # input from DATA array
   field(PREC, "5")
   info(INTEREST, "HIGH")
   info(archive, "VAL")
-}
-
-record (acalcout, "$(P)CURR:DATA:_AVG") {
-  field(DESC, "Averages the current data")
-  field(DTYP, "Soft Channel")
-  field(NELM, "$(NELM)")
-  field(PREC, "5")
-  field(INAA, "$(P)CALIBRATE:CURR CP MS")
-
-  field(CALC, "AVG(AA)")
-  field(OOPT, "Every Time")
-  field(DOPT, "Use CALC")
 }
 
 record(calc, "$(P)_CURRCALIBCONST")

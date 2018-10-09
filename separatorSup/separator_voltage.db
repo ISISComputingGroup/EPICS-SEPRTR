@@ -20,7 +20,7 @@ record(bo, "$(P)DISABLE")
 record(ai, "$(P)VOLT")
 {
   field(DESC, "Voltage")
-  field(EGU,  "kV")
+  field(EGU, "kV")
   field(HIGH, "$(PSU_MAX_VOLT)")
   field(LOW,  "0")
   field(HSV,  "MAJOR")
@@ -30,17 +30,6 @@ record(ai, "$(P)VOLT")
   field(PREC, "5")
   info(INTEREST, "HIGH")
   info(archive, "VAL")
-}
-
-record (acalcout, "$(P)VOLT:DATA:_AVG") {
-  field(DESC, "Averages the voltage data")
-  field(DTYP, "Soft Channel")
-  field(NELM, "$(NELM)")
-  field(INAA, "$(P)DAQ:VOLT:_RAW CP MS")
-
-  field(CALC, "AVG(AA)")
-  field(OOPT, "Every Time")
-  field(DOPT, "Use CALC")
 }
 
 record(calc, "$(P)_VOLTCALIBCONST")
