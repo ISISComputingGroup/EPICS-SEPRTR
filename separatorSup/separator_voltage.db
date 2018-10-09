@@ -23,8 +23,8 @@ record(ai, "$(P)VOLT")
   field(EGU,  "kV")
   field(HIGH, "$(PSU_MAX_VOLT)")
   field(LOW,  "0")
-  field(HSV,  "MINOR")
-  field(LSV,  "MINOR")
+  field(HSV,  "MAJOR")
+  field(LSV,  "MAJOR")
   field(DTYP, "Soft Channel")
   field(INP,  "$(P)CALIBRATE:VOLT CP MS") # input from DATA
   field(PREC, "5")
@@ -153,23 +153,23 @@ record(calcout, "$(P)CALIBRATE:VOLT:SP")
   field(INPA, "$(P)VOLT:SP CP MS")
   field(CALC, "(A * 10) / $(PSU_MAX_VOLT)")
   field(PREC, "5")
-  field(OUT, "$(P)DAQ:VOLT:SP:DATA PP")
+  field(OUT, "$(P)DAQ:VOLT:SP PP")
 }
 
-record(ao, "$(P)DAQ:VOLT:SP:DATA")
+record(ao, "$(P)DAQ:VOLT:SP")
 {
   $(IFNOTRECSIM)  field(DTYP, "asynFloat64")
   $(IFRECSIM) field(DTYP, "Soft Channel")
   field(OUT, "@asyn(W0, 2, 5.0) DATA")
   field(PREC, "5")
   field(SIML, "$(P)SIM")
-  field(SIOL, "$(P)DAQ:VOLT:SIM")
+  field(SIOL, "$(P)DAQ:VOLT:SIM PP")
   field(SDIS, "$(P)DISABLE")
 }
 
 record(ai, "$(P)DAQ:VOLT:SIM")
 {
-  field(INP, "$(P)DAQ:VOLT:SP:DATA CP")
+  #field(INP, "$(P)DAQ:VOLT:SP")
   field(DESC, "Device voltage")
   field(DTYP, "Soft Channel")
   field(PREC, "5")
