@@ -5,7 +5,6 @@
 record(ai, "$(P)VOLT")
 {
   field(DESC, "Voltage")
-  field(EGU, "kV")
   field(DTYP, "Soft Channel")
   field(INP,  "$(P)CALIBRATE:VOLT CP MS")
   field(PREC, "5")
@@ -88,23 +87,6 @@ record(acalcout, "$(P)DAQ:SIM:CALC")
   field(OOPT, "Every Time")
   field(OUT, "$(P)DAQ:VOLT:WV:SIM PP")
   field(DOPT, "Use CALC")
-}
-
-
-record(calcout, "$(P)DAQ:VOLT:ACQUIRE:_TRIG")
-{
-  field(INPA, "$(P)DAQ:VOLT:ACQUIRE.VAL CP MS")
-  field(CALC, "!A")
-  field(OUT, "$(P)DAQ:VOLT:ACQUIRE.VAL PP")
-  field(OOPT, "When Non-zero")
-}
-
-record(longout, "$(P)DAQ:VOLT:ACQUIRE")
-{
-  field(SCAN, ".5 second")
-  field(DTYP, "asynUInt32Digital")
-  field(OUT, "@asynMask(R0 2 0x01) ACQUIRE")
-  field(SDIS, "$(P)DISABLE")
 }
 
 ####################################

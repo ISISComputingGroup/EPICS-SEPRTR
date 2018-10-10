@@ -3,11 +3,6 @@
 record(ai, "$(P)CURR")
 {
   field(DESC, "Current")
-  field(EGU, "mA")
-  field(HIGH,  "2.6") # Magic number is DAQ max with small tolerance
-  field(LOW,  "-0.1") # Magic number is DAQ min with small tolernace
-  field(HSV,  "MAJOR")
-  field(LSV,  "MAJOR")
   field(DTYP, "Soft Channel")
   field(INP,  "$(P)CALIBRATE:CURR CP MS")
   field(PREC, "5")
@@ -70,24 +65,6 @@ record(waveform, "$(P)DAQ:CURR:_RAW")
   field(SDIS, "$(P)DISABLE")
   field(FLNK, "$(P)_APPLYCURRCALIB")
 }
-
-record(calcout, "$(P)DAQ:CURR:ACQUIRE:_TRIG")
-{
-  field(INPA, "$(P)DAQ:CURR:ACQUIRE.VAL CP MS")
-  field(CALC, "!A")
-  field(OUT, "$(P)DAQ:CURR:ACQUIRE.VAL PP")
-  field(OOPT, "When Non-zero")
-}
-
-record(longout, "$(P)DAQ:CURR:ACQUIRE")
-{
-  field(SCAN, "1 second")
-  field(DTYP, "asynUInt32Digital")
-  field(OUT, "@asynMask(R0 3 0x01) ACQUIRE")
-  field(SDIS, "$(P)DISABLE")
-}
-
-## SIM records
 
 record(waveform,  "$(P)DAQ:CURR:WV:SIM")
 {
