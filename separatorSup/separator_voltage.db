@@ -1,21 +1,6 @@
-record(bo, "$(P)SIM")
-{
-  field(SCAN, "Passive")
-  field(DTYP, "Soft Channel")
-  field(ZNAM, "NO")
-  field(ONAM, "YES")
-  field(VAL, "$(RECSIM=0)")
-}
-
-record(bo, "$(P)DISABLE")
-{
-  field(DESC, "Disable comms")
-  field(PINI, "YES")
-  field(VAL, "$(DISABLE=0)")
-  field(OMSL, "supervisory")
-  field(ZNAM, "COMMS ENABLED")
-  field(ONAM, "COMMS DISABLED")
-}
+####################################
+####### Reading the voltage ########
+####################################
 
 record(ai, "$(P)VOLT")
 {
@@ -26,8 +11,15 @@ record(ai, "$(P)VOLT")
   field(HSV,  "MAJOR")
   field(LSV,  "MAJOR")
   field(DTYP, "Soft Channel")
-  field(INP,  "$(P)CALIBRATE:VOLT CP MS") # input from DATA
+  field(INP,  "$(P)CALIBRATE:VOLT CP MS")
   field(PREC, "5")
+    field(EGU, "kV")
+  
+  field(HIHI, "$(PSU_MAX_VOLT)")
+  field(LOLO,  "0")
+  field(HHSV,  "MAJOR")
+  field(LLSV,  "MAJOR")
+  
   info(INTEREST, "HIGH")
   info(archive, "VAL")
 }
@@ -102,7 +94,6 @@ record(acalcout, "$(P)DAQ:SIM:CALC")
   field(DOPT, "Use CALC")
 }
 
-## TRIGGER records
 
 record(calcout, "$(P)DAQ:VOLT:ACQUIRE:_TRIG")
 {
@@ -132,7 +123,7 @@ record(ao, "$(P)VOLT:SP")
   field(DRVL,  "0")
   field(SCAN, "Passive")
   field(DTYP, "Soft Channel")
-  field(PREC, "2")
+  field(PREC, "5")
 }
 
 record(calcout, "$(P)CALIBRATE:VOLT:SP")

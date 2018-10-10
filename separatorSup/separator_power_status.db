@@ -1,7 +1,7 @@
 record(calcout, "$(P)STAT:POWER:_CALC")
 {
   field(INPA, "$(P)VOLT.VAL CP MS")
-  field(CALC, A>0.1) #PSU ON if voltage across DAQ is >0.1kV
+  field(CALC, "A > $(POWER_MIN_VOLT)") # PSU ON if voltage > $(POWER_MIN_VOLT) kV (defaults to 2 kV)
   field(OUT,  "$(P)POWER:STAT")
 }
 

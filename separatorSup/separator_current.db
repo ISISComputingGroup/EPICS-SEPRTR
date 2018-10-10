@@ -9,8 +9,15 @@ record(ai, "$(P)CURR")
   field(HSV,  "MAJOR")
   field(LSV,  "MAJOR")
   field(DTYP, "Soft Channel")
-  field(INP,  "$(P)CALIBRATE:CURR CP MS") # input from DATA array
+  field(INP,  "$(P)CALIBRATE:CURR CP MS")
   field(PREC, "5")
+  field(EGU, "mA")
+  
+  field(HIHI, "$(PSU_MAX_CURR)")
+  field(LOLO,  "0")
+  field(HHSV,  "MAJOR")
+  field(LLSV,  "MAJOR")
+  
   info(INTEREST, "HIGH")
   info(archive, "VAL")
 }
