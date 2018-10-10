@@ -1,0 +1,64 @@
+# Separator Current
+
+record(ai, "$(P)CURR")
+{
+  field(DESC, "Current")
+  field(DTYP, "Soft Channel")
+  field(INP,  "$(P)CALIBRATE:CURR CP MS")
+  field(PREC, "5")
+  field(EGU, "mA")
+  
+  field(HIHI, "$(PSU_MAX_CURR)")
+  field(LOLO,  "0")
+  field(HHSV,  "MAJOR")
+  field(LLSV,  "MAJOR")
+  
+  info(INTEREST, "HIGH")
+  info(archive, "VAL")
+}
+
+record(calc, "$(P)CALIBRATE:CURR")
+{
+    field(DESC, "Calibrates the current")
+    field(INPA, "$(P)DAQ:CURR:DATA CP MS")
+    field(CALC, "A * $(PSU_MAX_CURR) / 10")
+    field(PREC, "5")
+}
+
+record(subArray, "$(P)DAQ:CURR:DATA")
+{
+  field(PINI, "NO")
+  field(DTYP, "Soft Channel")
+  field(PREC, "5")
+  field(INP, "$(P)DAQ:CURR:_RAW CP MS")
+  field(NELM, "1")
+  field(INDX, "0")
+  field(FTVL, "DOUBLE")
+}
+
+# RECSIM testing here because simulating a waveform and an I/O Intr is very
+# difficult. This is the deepest level that can be tested without
+# significant effort/restructuring
+
+record(waveform, "$(P)DAQ:CURR:_RAW")
+{
+  $(IFNOTRECSIM) field(SCAN,"I/O Intr")
+  field(PINI, "NO")
+  $(IFNOTRECSIM)  field(DTYP, "asynFloat64ArrayIn")
+  $(IFRECSIM) field(DTYP, "Soft Channel")
+  field(PREC, "5")
+  field(INP, "@asyn(R0 3 5.0) DATA")
+  field(NELM, "$(NELM)")
+  field(FTVL, "DOUBLE")
+  field(EVNT, "1")
+  field(SIML, "$(P)SIM")
+  field(SIOL, "$(P)DAQ:CURR:WV:SIM CP")
+  field(SDIS, "$(P)DISABLE")
+}
+
+record(waveform,  "$(P)DAQ:CURR:WV:SIM")
+{
+  field(DESC,  "Current simulation")
+  field(NELM,  "1000")
+  field(FTVL,  "DOUBLE")
+}

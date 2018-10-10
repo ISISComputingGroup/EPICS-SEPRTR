@@ -1,0 +1,119 @@
+####################################
+####### Reading the voltage ########
+####################################
+
+record(ai, "$(P)VOLT")
+{
+  field(DESC, "Voltage")
+  field(DTYP, "Soft Channel")
+  field(INP,  "$(P)CALIBRATE:VOLT CP MS")
+  field(PREC, "5")
+    field(EGU, "kV")
+  
+  field(HIHI, "$(PSU_MAX_VOLT)")
+  field(LOLO,  "0")
+  field(HHSV,  "MAJOR")
+  field(LLSV,  "MAJOR")
+  
+  info(INTEREST, "HIGH")
+  info(archive, "VAL")
+}
+
+record(calc, "$(P)CALIBRATE:VOLT")
+{
+    field(DESC, "Calibrates the voltage")
+    field(INPA, "$(P)DAQ:VOLT:DATA CP MS")
+    field(CALC, "A * $(PSU_MAX_VOLT) / 10")
+    field(PREC, "5")
+}
+
+record(subArray, "$(P)DAQ:VOLT:DATA")
+{
+  field(PINI, "NO")
+  field(DTYP, "Soft Channel")
+  field(PREC, "5")
+  field(INP, "$(P)DAQ:VOLT:_RAW CP MS")
+  field(NELM, "1")
+  field(INDX, "0")
+  field(FTVL, "DOUBLE")
+}
+
+record(waveform, "$(P)DAQ:VOLT:_RAW")
+{
+  $(IFNOTRECSIM) field(SCAN,"I/O Intr")
+  field(PINI, "NO")
+  $(IFNOTRECSIM)  field(DTYP, "asynFloat64ArrayIn")
+  $(IFRECSIM) field(DTYP, "Soft Channel")
+  field(PREC, "5")
+  field(INP, "@asyn(R0 2 5.0) DATA")
+  field(NELM, "$(NELM)")
+  field(FTVL, "DOUBLE")
+  field(EVNT, "1")
+  field(SIML, "$(P)SIM")
+  field(SIOL, "$(P)DAQ:VOLT:WV:SIM CP")
+  field(SDIS, "$(P)DISABLE")
+}
+
+record(waveform,  "$(P)DAQ:VOLT:WV:SIM")
+{
+  field(DESC,  "Array of voltage simulation")
+  field(NELM,  "100")
+  field(FTVL,  "DOUBLE")
+}
+
+record(acalcout, "$(P)DAQ:VOLT:CALC:SIM")
+{
+  field(DESC, "Converts voltage to waveform")
+  field(INPA, "$(P)DAQ:VOLT:SIM CP")
+  field(CALC, "ARR(A)")
+  field(NELM, "100")
+
+  field(OOPT, "Every Time")
+  field(OUT, "$(P)DAQ:VOLT:WV:SIM PP")
+  field(DOPT, "Use CALC")
+}
+
+
+####################################
+####### Setting the voltage ########
+####################################
+
+record(ao, "$(P)VOLT:SP")
+{
+  field(DESC, "Voltage set point")
+  field(EGU, "kV")
+  field(DRVH,  "200")
+  field(DRVL,  "0")
+  field(SCAN, "Passive")
+  field(DTYP, "Soft Channel")
+  field(PREC, "5")
+}
+
+record(calcout, "$(P)CALIBRATE:VOLT:SP")
+{
+  field(IVOA, "Don't drive outputs")
+  field(DESC, "Calibrates the voltage setpoint")
+  field(INPA, "$(P)VOLT:SP CP MS")
+  field(CALC, "(A * 10) / $(PSU_MAX_VOLT)")
+  field(PREC, "5")
+  field(OUT, "$(P)DAQ:VOLT:SP:DATA PP")
+}
+
+record(ao, "$(P)DAQ:VOLT:SP:DATA")
+{
+  $(IFNOTRECSIM)  field(DTYP, "asynFloat64")
+  $(IFRECSIM) field(DTYP, "Soft Channel")
+  field(OUT, "@asyn(W0, 2, 5.0) DATA")
+  field(PREC, "5")
+  field(SIML, "$(P)SIM")
+  field(SIOL, "$(P)DAQ:VOLT:SIM")
+  field(SDIS, "$(P)DISABLE")
+}
+
+record(ai, "$(P)DAQ:VOLT:SIM")
+{
+  field(INP, "$(P)DAQ:VOLT:SP:DATA CP")
+  field(DESC, "Device voltage")
+  field(DTYP, "Soft Channel")
+  field(PREC, "5")
+}
