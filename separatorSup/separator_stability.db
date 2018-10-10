@@ -5,7 +5,7 @@
 record(calc, "$(P)SAMPLETIME")
 {
     field(DESC, "Holds sample time (1/freq)")
-    field(EGU, "S")
+    field(EGU, "s")
     field(SCAN, "Passive")
     field(CALC, "1.0/$(FREQ)")
     field(PINI, "YES")
@@ -53,7 +53,7 @@ record(ai, "$(P)WINDOWSIZE")
     field(DESC, "Seconds in the moving window")
     field(VAL, "$(WINDOWSIZE)")
     field(PREC, "5")
-    field(EGU, "S")
+    field(EGU, "s")
 }
 
 record(ai, "$(P)THRESHOLD")
@@ -120,7 +120,7 @@ record(fanout, "$(P)_COUNTERTIMING")
 record(calc, "$(P)UNSTABLETIME")
 {
     field(DESC, "Moving window of unstable time")
-    field(EGU, "S")
+    field(EGU, "s")
     field(SCAN, "Passive")
     field(CALC, "A * B")
 
@@ -130,6 +130,7 @@ record(calc, "$(P)UNSTABLETIME")
     field(HIGH, "$(MAXUNSTBL)")
     field(HSV, "MAJOR")
 
+    field(ASG, "READONLY")
     info(alarm, "SEPRTR")
     info(archive, "VAL")
     info(INTEREST, "HIGH")
@@ -138,7 +139,7 @@ record(calc, "$(P)UNSTABLETIME")
 record(calc, "$(P)STABILITY")
 {
     field(DESC, "1 if stable, 0 otherwise")
-    field(EGU, "S")
+    field(EGU, "s")
     field(SCAN, "Passive")
     field(CALC, "A < B")
 
