@@ -118,15 +118,15 @@ record(ao, "$(P)DAQ:VOLT:SP")
 {
   $(IFNOTRECSIM)  field(DTYP, "asynFloat64")
   $(IFRECSIM) field(DTYP, "Soft Channel")
-  field(OUT, "@asyn(W0, 2, 5.0) DATA")
+  $(IFNOTRECSIM) field(OUT, "@asyn(W0, 2, 5.0) DATA")
+  $(IFRECSIM) field(OUT, "$(P)DAQ:VOLT:SIM PP")
   field(PREC, "5")
-  field(SIML, "$(P)SIM")
-  field(SIOL, "$(P)DAQ:VOLT:SIM PP")
   field(SDIS, "$(P)DISABLE")
 }
 
-record(ai, "$(P)DAQ:VOLT:SIM")
+record(ao, "$(P)DAQ:VOLT:SIM")
 {
+  field(SCAN, "Passive")
   field(DESC, "Device voltage")
   field(DTYP, "Soft Channel")
   field(PREC, "5")
