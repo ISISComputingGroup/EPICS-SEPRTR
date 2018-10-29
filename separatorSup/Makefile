@@ -9,9 +9,6 @@ DB += separator_voltage.db
 DB += separator_current.db
 DB += separator_stability.db
 
-#protocol files
-DATA += separator.proto
-
 LIBRARY_IOC += SEPRTR
 
 DBD += separator.dbd
