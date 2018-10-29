@@ -125,7 +125,7 @@ record(calc, "$(P)UNSTABLETIME")
     field(CALC, "A * B")
 
     # Input A written by aSub record
-    field(INPB, "$(P)SAMPLETIME CP")
+    field(INPB, "$(P)SAMPLETIME")
 
     field(HIGH, "$(MAXUNSTBL)")
     field(HSV, "MAJOR")
@@ -143,11 +143,14 @@ record(calc, "$(P)STABILITY")
     field(SCAN, "Passive")
     field(CALC, "A < B")
 
-    field(INPA, "$(P)UNSTABLETIME CP MS")
+    field(INPA, "$(P)UNSTABLETIME CP")
     field(INPB, "$(P)THRESHOLD")
 
     field(LOW, "0.5")
     field(LSV, "MAJOR")
+
+    field(HIGH, "9999")
+    field(HSV, "NO_ALARM")
 }
 
 record(aSub, "$(P)STABILITY:PARSE")
@@ -172,8 +175,29 @@ record(aSub, "$(P)STABILITY:PARSE")
     field(FTVB, "LONG")
 }
 
-record(bi, "$(P)RESETWINDOW")
+record(bo, "$(P)RESETWINDOW")
 {
     field(DESC, "Resets the moving window")
     field(VAL, "0")
+}
+
+record(scalcout, "$(P)_DISABLEALARMS")
+{
+    field(CALC, "A==0?AA:BB")
+    field(INPA, "$(P)POWER:STAT CP")
+    field(AA, "NO_ALARM")
+    field(BB, "MAJOR")
+    field(OOPT, "Every Time")
+    field(DOPT, "Use CALC")
+    field(DTYP, "Soft Channel")
+    field(FLNK, "$(P)ALARMSTATUS PP")
+}
+
+record(sseq, "$(P)ALARMSTATUS")
+{
+    field(DOL1, "$(P)_DISABLEALARMS.OSV CP")
+    field(LNK1, "$(P)STABILITY.LSV PP")
+    field(DOL2, "$(P)_DISABLEALARMS.OSV CP")
+    field(LNK2, "$(P)UNSTABLETIME.HSV PP")
+
 }

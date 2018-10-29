@@ -41,8 +41,6 @@ long parse_stability_impl(aSubRecord *prec)
         return 1;
     }
 
-    // Put type/value checking on input variables here
-
     try {
 
         if ( pvHistory.find(prec->name) == pvHistory.end() ) {
@@ -60,19 +58,24 @@ long parse_stability_impl(aSubRecord *prec)
             circularBuffer = new boost::circular_buffer<long>(bufferLen);
             pvHistory[prec->name] = circularBuffer;
 
+            // Rearm the reset window PV
+            *(long*) prec->valb = 0;
+
         } else {
             // Recall circularBuffer from the map
             circularBuffer = pvHistory[prec->name];
+
         }
 
         // Add the new value to the circular buffer
         circularBuffer->push_back(dataValue);
-        sum = std::accumulate(circularBuffer->begin(), circularBuffer->end(), 0);
 
         // Return the summed value of the buffer
+        sum = std::accumulate(circularBuffer->begin(), circularBuffer->end(), 0);
+
         *(long*) prec->vala = sum;
-        *(long*) prec->valb = 0;
-    
+
+
     }
     catch (const std::exception& e) {
         errlogSevPrintf(errlogMajor, "%s exception %s", prec->name, e.what());
