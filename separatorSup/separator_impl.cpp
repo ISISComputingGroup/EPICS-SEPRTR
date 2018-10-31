@@ -46,7 +46,7 @@ long parse_stability_impl(aSubRecord *prec)
         if ( pvHistory.find(prec->name) == pvHistory.end() ) {
             // This PV has not called the aSub function before. Initialise.
 
-            circularBuffer = new boost::circular_buffer<long>(bufferLen);
+            circularBuffer = new boost::circular_buffer<long>(bufferLen + 1);
             pvHistory[prec->name] = circularBuffer;
 
         } else if (reset != 0) {
@@ -55,7 +55,7 @@ long parse_stability_impl(aSubRecord *prec)
             circularBuffer = pvHistory[prec->name];
             delete circularBuffer;
 
-            circularBuffer = new boost::circular_buffer<long>(bufferLen);
+            circularBuffer = new boost::circular_buffer<long>(bufferLen + 1);
             pvHistory[prec->name] = circularBuffer;
 
             // Rearm the reset window PV
