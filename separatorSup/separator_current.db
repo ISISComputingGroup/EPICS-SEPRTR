@@ -17,33 +17,42 @@ record(ai, "$(P)CURR")
   info(archive, "VAL")
 }
 
-record(calc, "$(P)CALIBRATE:CURR")
+record(calc, "$(P)_CURRCALIBCONST")
 {
-    field(DESC, "Calibrates the current")
-    field(INPA, "$(P)DAQ:CURR:DATA CP MS")
-    field(CALC, "A * $(PSU_MAX_CURR) / 10")
+    field(DESC, "Holds DAQ to Amps calibration constant")
+    field(CALC, "$(PSU_MAX_CURR)/10")
+    field(PINI, "YES")
     field(PREC, "5")
 }
 
-record(subArray, "$(P)DAQ:CURR:DATA")
+record(acalcout, "$(P)_APPLYCURRCALIB")
 {
-  field(PINI, "NO")
+  field(DESC, "Applies current calibration")
   field(DTYP, "Soft Channel")
+  field(OOPT, "Every Time")
+  field(NELM, "$(NELM)")
   field(PREC, "5")
-  field(INP, "$(P)DAQ:CURR:_RAW CP MS")
-  field(NELM, "1")
-  field(INDX, "0")
-  field(FTVL, "DOUBLE")
+
+  field(CALC, "B * AA")
+
+  field(INAA, "$(P)DAQ:CURR:_RAW")
+  field(INPB, "$(P)_CURRCALIBCONST NPP")
+
+  field(OUT, "$(P)CALIBRATE:CURR PP")
+  field(OEVT, "1")
 }
 
-# RECSIM testing here because simulating a waveform and an I/O Intr is very
-# difficult. This is the deepest level that can be tested without
-# significant effort/restructuring
+record(waveform, "$(P)CALIBRATE:CURR") {
+  field(DESC, "Holds calibrated current data")
+  field(NELM, "$(NELM)")
+  field(DTYP, "Soft Channel")
+  field(PREC, "5")
+}
 
 record(waveform, "$(P)DAQ:CURR:_RAW")
 {
   $(IFNOTRECSIM) field(SCAN,"I/O Intr")
-  field(PINI, "NO")
+  $(IFNOTRECSIM) field(PINI, "NO")
   $(IFNOTRECSIM)  field(DTYP, "asynFloat64ArrayIn")
   $(IFRECSIM) field(DTYP, "Soft Channel")
   field(PREC, "5")
@@ -52,13 +61,16 @@ record(waveform, "$(P)DAQ:CURR:_RAW")
   field(FTVL, "DOUBLE")
   field(EVNT, "1")
   field(SIML, "$(P)SIM")
-  field(SIOL, "$(P)DAQ:CURR:WV:SIM CP")
+  field(SIOL, "$(P)DAQ:CURR:WV:SIM")
   field(SDIS, "$(P)DISABLE")
+  field(FLNK, "$(P)_APPLYCURRCALIB")
 }
 
 record(waveform,  "$(P)DAQ:CURR:WV:SIM")
 {
   field(DESC,  "Current simulation")
-  field(NELM,  "1000")
+  field(NELM,  "$(NELM)")
   field(FTVL,  "DOUBLE")
+  field(FLNK, "$(P)DAQ:CURR:_RAW")
+  field(PREC, "5")
 }
