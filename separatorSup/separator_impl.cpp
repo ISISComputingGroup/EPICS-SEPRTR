@@ -46,11 +46,15 @@ long parse_stability_impl(aSubRecord *prec)
         if ( pvHistory.find(prec->name) == pvHistory.end() ) {
             // This PV has not called the aSub function before. Initialise.
 
+            std::cout << "a" << std::endl;
+
             circularBuffer = new boost::circular_buffer<long>(bufferLen);
             pvHistory[prec->name] = circularBuffer;
 
         } else if (reset != 0) {
             // Replace the circular buffer in the map with a new, uninitialised one
+
+            std::cout << "b" << std::endl;
 
             circularBuffer = pvHistory[prec->name];
             delete circularBuffer;
@@ -63,9 +67,12 @@ long parse_stability_impl(aSubRecord *prec)
 
         } else {
             // Recall circularBuffer from the map
+            std::cout << "c" << std::endl;
             circularBuffer = pvHistory[prec->name];
 
         }
+
+        std::cout << dataValue << std::endl;
 
         // Add the new value to the circular buffer
         circularBuffer->push_back(dataValue);
