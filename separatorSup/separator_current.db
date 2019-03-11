@@ -17,6 +17,14 @@ record(ai, "$(P)CURR")
   info(archive, "VAL")
 }
 
+# PSU may implement current setpoint in future
+# used by muon instruments labview code!
+record(ao, "$(P)CURR:SP") {
+  field("VAL", "0")
+  field("PINI", "YES")
+  field("ASG", "READONLY")
+}
+
 record(calc, "$(P)_CURRCALIBCONST")
 {
     field(DESC, "Holds DAQ to Amps calibration constant")
