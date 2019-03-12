@@ -10,5 +10,6 @@ ONCRPC=$(SUPPORT)/oncrpc/master
 SNCSEQ=$(SUPPORT)/seq/master
 UTILITIES=$(SUPPORT)/utilities/master
 ASUBFUNCTIONS=$(SUPPORT)/asubFunctions/master
+GTEST=$(SUPPORT)/googletest/master
 
 separator=$(SUPPORT)/separator/EPICS-SEPRTR

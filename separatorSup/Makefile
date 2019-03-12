@@ -22,6 +22,15 @@ SEPRTR_LIBS += $(EPICS_BASE_IOC_LIBS)
 SEPRTR_LIBS += asyn utilities
 SEPRTR_LIBS += asubFunctions
 
+#=======================================
+# googleTest Runner
+
+TESTPROD_HOST += runner
+USR_CPPFLAGS += -I$(GTEST)/googletest/include
+runner_SRCS += run_all_tests.cc
+
+runner_SRCS += separator_tests.cc
+runner_LIBS += gtest
 
 #=======================================
 include $(TOP)/configure/RULES
