@@ -1,43 +1,40 @@
 #include "gtest/gtest.h"
 #include "seprtr_gtest_fncts.h"
 
-
-/**
- * Mimics the expected behaviour of the filtering required of the aSub record
- * 
- * Input: data_packet, An array of floats equivalent to data from a DAQ
- * Returns: filtered_data, Array of floats averaged to filter out noise.
- *
-static double apply_filter_to_test_data(static double data_packet) {
-    double filtered_data[sizeof(data_packet) - 1];
-
-    for (unsigned int i = 0; i < (sizeof(data_packet) - 1); ++i)
-    {
-      filtered_data[i] = 0.5 * (data_packet[i] + data_packet[i + 1]);
-    }
-
-}
-*/
+const int success_code = 0, fail_code = 1;
+const int number_of_input_values = 4, too_many_values = number_of_input_values + 1;
+double test_data[number_of_input_values] = { 10.0, 20.0, 10.0, 20.0 }, expected_result[3] = { 15.0, 15.0, 15.0 };
 
 namespace {
-    TEST(Separator, test_GIVEN_input_array_WHEN_array_processed_THEN_array_of_moving_averages_returned){
+    TEST(Separator, test_GIVEN_input_array_WHEN_moving_average_calculated_THEN_array_of_moving_averages_returned){
         // GIVEN
-        const int number_of_values_per_packet = 4;
-        //double test_data[number_of_values_per_packet] returned_data[number_of_values_per_packet];
-        double test_data[number_of_values_per_packet] = {10.0, 20.0, 10.0, 20.0}, expected_result[3] = {15.0, 15.0, 15.0};
+        int return_code;
 
-        std::vector<double> returned_data(number_of_values_per_packet);
+        std::vector<double> returned_data(number_of_input_values - 1);
 
         // WHEN
-        perform_moving_average(test_data, returned_data, number_of_values_per_packet);
+        return_code = perform_moving_average(test_data, returned_data, number_of_input_values);
 
         // THEN
         for (int i = 0; i < 3; ++i) {
             EXPECT_EQ(returned_data[i], expected_result[i]);
         }
 
+        EXPECT_EQ(return_code, success_code);
 
-        //ASSERT_EQ(returned_data, expected_result);
+    }
+
+    TEST(Separator, test_GIVEN_input_array_of_different_length_to_data_len_WHEN_moving_average_calculated_THEN_function_returns_fail){
+        // GIVEN
+        int return_code;
+
+        std::vector<double> returned_data(number_of_input_values - 1);
+
+        // WHEN
+        return_code = perform_moving_average(test_data, returned_data, too_many_values);
+
+        // THEN
+        EXPECT_EQ(return_code, fail_code);
 
     }
 } // namespace

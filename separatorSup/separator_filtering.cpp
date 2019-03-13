@@ -8,25 +8,35 @@
 #include <errlog.h>
 #include <epicsString.h>
 #include <epicsExport.h>
+#include <iostream>
 
 #include "separator.h"
 #include "seprtr_gtest_fncts.h"
 
 /**
-* Applies a moving average to the data packet
+* Calculates the moving average of the input array with a stride length of 1 (average i with i+1)
 *
 * Input: data_packet, An array of floats equivalent to data from a DAQ
-* Returns: filtered_data, Array of floats averaged to filter out noise.
+* Input: data_len, The number of data points in the input array
+* Output: filtered_data, Array of floats averaged to filter out noise.
 */
-long perform_moving_average(double *data_packet, std::vector<double>& filtered_data, int arr_len) {
-    const long packet_length = sizeof(data_packet);
+int perform_moving_average(double *data_packet, std::vector<double>& filtered_data, int data_len) {
 
-    for (int i = 0; i < arr_len; ++i)
-    {
-        filtered_data[i] = 0.5 * (data_packet[i] + data_packet[i + 1]);
+    try {
+
+        for (int i = 0; i < data_len; ++i)
+        {
+            filtered_data[i] = 0.5 * (data_packet[i] + data_packet[i + 1]);
+        }
+
+    }
+    catch (std::out_of_range) {
+        errlogSevPrintf(errlogMajor, "Caught of of range error, input data too short?");
+        std::cout<< "Caught of of range error, input data too short?" <<std::endl;
+        return 1;
     }
 
-    return 1;
+    return 0;
 
 }
 
