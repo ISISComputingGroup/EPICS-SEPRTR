@@ -20,19 +20,11 @@
 * Input: data_len, The number of data points in the input array
 * Output: filtered_data, Array of floats averaged to filter out noise.
 */
-int perform_moving_average(double *data_packet, std::vector<double>& filtered_data, int data_len) {
+int perform_moving_average(const std::vector<double>& input_data, std::vector<double>& filtered_data) {
 
-    try {
-
-        for (int i = 0; i < data_len - 1; ++i)
-        {
-            filtered_data.at(i) = 0.5 * (data_packet[i] + data_packet[i + 1]);
-        }
-
-    }
-    catch (std::out_of_range) {
-        errlogSevPrintf(errlogMajor, "Caught of of range error, input data too short?");
-        return 1;
+    for (int i = 0; i < input_data.size() - 1; ++i)
+    {
+        filtered_data.push_back(0.5 * (input_data[i] + input_data[i + 1]));
     }
 
     return 0;
@@ -50,11 +42,17 @@ long apply_filter_impl(aSubRecord *prec)
     const int stride_length = 1;
     double* measured_data = (double*)prec->a;
     unsigned int data_length = prec->noa;
-    std::vector<double> filtered_data(data_length - stride_length);
+    std::vector<double> filtered_data;
+    std::vector<double> input_data;
+
+    for (int i = 0; i < data_length; ++i)
+    {
+        input_data.push_back(measured_data[i]);
+    }
     
 
     try {
-        perform_moving_average(measured_data, filtered_data, data_length);
+        perform_moving_average(input_data, filtered_data);
     }
     catch (std::out_of_range) {
         errlogSevPrintf(errlogMajor, "%s unknown exception", prec->name);

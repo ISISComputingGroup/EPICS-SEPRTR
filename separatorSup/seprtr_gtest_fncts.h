@@ -1,1 +1,1 @@
-int perform_moving_average(double *data_packet, std::vector<double>& filtered_data, int arr_len);
+int perform_moving_average(const std::vector<double>& input_data, std::vector<double>& filtered_data);
