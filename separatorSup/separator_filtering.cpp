@@ -42,14 +42,13 @@ long apply_filter_impl(aSubRecord *prec)
     const int stride_length = 1;
     double* measured_data = (double*)prec->a;
     unsigned int data_length = prec->noa;
-    std::vector<double> filtered_data;
+    std::vector<double> filtered_data(*(double*) prec->vala, *(epicsUInt32*) prec->noa - 1);
     std::vector<double> input_data;
 
-    for (int i = 0; i < data_length; ++i)
+    for (unsigned int i = 0; i < data_length; ++i)
     {
         input_data.push_back(measured_data[i]);
     }
-    
 
     try {
         perform_moving_average(input_data, filtered_data);
