@@ -3,7 +3,7 @@
 
 const int success_code = 0, fail_code = 1;
 const int number_of_input_values = 4, too_many_values = number_of_input_values + 1;
-double test_data[number_of_input_values] = { 10.0, 20.0, 10.0, 20.0 }, expected_result[3] = { 15.0, 15.0, 15.0 };
+double test_data[number_of_input_values] = { 1.0, 2.0, 3.0, 4.0 }, expected_result[3] = { 1.5, 2.5, 3.5 };
 
 namespace {
     TEST(Separator, test_GIVEN_input_array_WHEN_moving_average_calculated_THEN_array_of_moving_averages_returned){

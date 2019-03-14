@@ -24,15 +24,14 @@ int perform_moving_average(double *data_packet, std::vector<double>& filtered_da
 
     try {
 
-        for (int i = 0; i < data_len; ++i)
+        for (int i = 0; i < data_len - 1; ++i)
         {
-            filtered_data[i] = 0.5 * (data_packet[i] + data_packet[i + 1]);
+            filtered_data.at(i) = 0.5 * (data_packet[i] + data_packet[i + 1]);
         }
 
     }
     catch (std::out_of_range) {
         errlogSevPrintf(errlogMajor, "Caught of of range error, input data too short?");
-        std::cout<< "Caught of of range error, input data too short?" <<std::endl;
         return 1;
     }
 
@@ -50,13 +49,17 @@ long apply_filter_impl(aSubRecord *prec)
 
     const int stride_length = 1;
     double* measured_data = (double*)prec->a;
-    int data_length = (int)prec->noa;
-    std::vector<double> filtered_data(data_length);
+    unsigned int data_length = prec->noa;
+    std::vector<double> filtered_data(data_length - stride_length);
+    
 
     try {
         perform_moving_average(measured_data, filtered_data, data_length);
     }
     catch (std::out_of_range) {
-        errlogSevPrintf(errlogMajor, "Caught of of range error, input data too short?");
+        errlogSevPrintf(errlogMajor, "%s unknown exception", prec->name);
+        return 1;
     }
+
+    return 0;
 }
