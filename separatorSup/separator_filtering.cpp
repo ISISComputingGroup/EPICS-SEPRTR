@@ -15,7 +15,7 @@
 #include "seprtr_gtest_fncts.h"
 
 /**
-* Calculates the moving average of the input array with a stride length of 1 (average i with i+1)
+* Calculates the moving average of the input array with a given stride length (average i with i+stride_len)
 *
 * Input: data_packet, An array of floats equivalent to data from a DAQ
 * Input: data_len, The number of data points in the input array

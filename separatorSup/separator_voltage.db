@@ -56,7 +56,6 @@ record(aSub, "$(P)_APPLYVOLTFILTER")
 {
     field(DESC, "Applies moving average to data")
     field(SNAM, "apply_filter")
-    #field(PINI, "YES")
 
     field(INPA, "$(P)CALIBRATE:VOLT CP")
     field(FTA, "DOUBLE")

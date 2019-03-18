@@ -73,13 +73,13 @@ record(acalcout, "$(P)_STABILITYCHECK")
     field(OOPT, "Every Time")
     field(NELM, "$(NELM)")
 
-
     # 0 if sample is within threshold, 1 if sample is outside threshold
     # A is upper limit, B is lower limit, C + D is current threshold
     field(CALC, "SUM((A<AA)||(B>AA)||((C+D)<=BB))")
 
-    # Only update on new voltage (or current) data to avoid double counting
-    field(INAA, "$(P)CALIBRATE:VOLT CP")
+    # Only update on new voltage (or current) data to avoid double counting.
+    # To bypass filtering, replace INAA with $(P)CALIBRATE:VOLT.
+    field(INAA, "$(P)FILTERED:VOLT CP")
     field(INBB, "$(P)CALIBRATE:CURR NPP")
 
     field(INPA, "$(P)VOLT:UPPERLIM NPP")
@@ -151,6 +151,10 @@ record(calc, "$(P)STABILITY")
 
     field(HIGH, "9999")
     field(HSV, "NO_ALARM")
+
+    info(alarm, "SEPRTR")
+    info(archive, "VAL")
+    info(INTEREST, "HIGH")
 }
 
 record(aSub, "$(P)STABILITY:PARSE")
