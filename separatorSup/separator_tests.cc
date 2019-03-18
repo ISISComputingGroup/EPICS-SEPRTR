@@ -2,6 +2,7 @@
 #include "gtest/gtest.h"
 #include "seprtr_gtest_fncts.h"
 
+const int stride_len = 1;
 const int success_code = 0, fail_code = 1;
 const int number_of_input_values = 4, too_many_values = number_of_input_values + 1;
 std::vector<epicsFloat64> test_data { 1.0, 2.0, 3.0, 4.0 };
@@ -15,7 +16,7 @@ namespace {
         std::vector<epicsFloat64> returned_data;
 
         // WHEN
-        return_code = perform_moving_average(test_data, returned_data);
+        return_code = perform_moving_average(test_data, returned_data, stride_len);
 
         // THEN
         for (int i = 0; i < 3; ++i) {
@@ -25,5 +26,19 @@ namespace {
         EXPECT_EQ(return_code, success_code);
 
     }
+
+    TEST(Separator, test_GIVEN_input_array_WHEN_moving_average_calculated_THEN_returned_array_is_of_correct_length) {
+        // GIVEN
+
+        std::vector<epicsFloat64> larger_vector(too_many_values);
+        std::vector<epicsFloat64> returned_data;
+
+        // WHEN
+        perform_moving_average(larger_vector, returned_data, stride_len);
+
+        // THEN
+        EXPECT_EQ(returned_data.size(), larger_vector.size() - stride_len);
+    }
+
 
 } // namespace

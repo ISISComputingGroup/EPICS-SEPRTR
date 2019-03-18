@@ -19,17 +19,14 @@
 *
 * Input: data_packet, An array of floats equivalent to data from a DAQ
 * Input: data_len, The number of data points in the input array
+* Input: stride_length, The number of indices to skip over to perform the two-point average
 * Output: filtered_data, Array of floats averaged to filter out noise.
 */
-int perform_moving_average(const std::vector<epicsFloat64>& input_data, std::vector<epicsFloat64>& filtered_data) {
+int perform_moving_average(const std::vector<epicsFloat64>& input_data, std::vector<epicsFloat64>& filtered_data, const int stride_len) {
 
-    std::cout << "Function run" << std::endl;
-    for (int i = 0; i < input_data.size() - 1; ++i)
+    for (int i = 0; i < input_data.size() - stride_len; ++i)
     {
-        filtered_data.push_back(0.5 * (input_data[i] + input_data[i + 1]));
-        //filtered_data.at(i) = (0.5 * (input_data[i] + input_data[i + 1]));
-        std::cout << "value:" << input_data[i] << std::endl;
-        // This might be adding the data on the end of nonsense
+        filtered_data.push_back(0.5 * (input_data[i] + input_data[i + stride_len]));
     }
 
     return 0;
@@ -38,51 +35,35 @@ int perform_moving_average(const std::vector<epicsFloat64>& input_data, std::vec
 
 long apply_filter_impl(aSubRecord *prec)
 {
+    const int stride_len = 1;
+    epicsFloat64* measured_data = (epicsFloat64*)prec->a;
+    unsigned int data_length = prec->nea;
+    std::vector<double> filtered_data;
+    std::vector<epicsFloat64> input_data;
 
-    std::cout << "Enter C++" << std::endl;
     if (prec->fta != menuFtypeDOUBLE)
     {
         errlogSevPrintf(errlogMajor, "%s incorrect argument type A", prec->name);
 
-        return 0;
+        return 1;
     }
-
-    const int stride_length = 1;
-    epicsFloat64* measured_data = (epicsFloat64*)prec->a;
-    unsigned int data_length = prec->nea;
-
-    std::cout << "data_length " << data_length << std::endl;
 
     if (data_length < 1) {
         return 1;
     }
-    
-    // This is defining a vector with a start point defined by the prec->vala pointer location
-    //std::vector<double> filtered_data(data_length - 1);
-    std::vector<double> filtered_data;
-    std::vector<epicsFloat64> input_data;
 
-    //epicsFloat64* arr_out = 
-    
-    prec->neva = data_length - 1;
-    //prec->nova = data_length - 1;
+    // Write the number of elements in output array to NEVA field
+    prec->neva = data_length - stride_len;
 
-    std::cout << "Defined arrays" << std::endl;
     for (unsigned int i = 0; i < data_length; ++i)
     {
         input_data.push_back(measured_data[i]);
     }
 
     try {
-        std::cout << "Function called" << std::endl;
-        perform_moving_average(input_data, filtered_data);
-        
-        for (unsigned int i = 0; i < filtered_data.size(); ++i)
-        {
-            std::cout << i << std::endl;
-            std::cout << "Final value :" << filtered_data[i] << std::endl;
-        }
+        perform_moving_average(input_data, filtered_data, stride_len);
 
+        // Move the filtered data from the working vector to the epics aSub array
         std::copy(filtered_data.begin(), filtered_data.end(), (epicsFloat64*) prec->vala);
 
     }
