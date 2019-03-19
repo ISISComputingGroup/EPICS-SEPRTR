@@ -18,7 +18,6 @@
 * Calculates the moving average of the input array with a given stride length (average i with i+stride_len)
 *
 * Input: data_packet, An array of floats equivalent to data from a DAQ
-* Input: data_len, The number of data points in the input array
 * Input: stride_length, The number of indices to skip over to perform the two-point average
 * Output: filtered_data, Array of floats averaged to filter out noise.
 */
@@ -38,7 +37,7 @@ long apply_filter_impl(aSubRecord *prec)
     const int stride_len = 1;
     epicsFloat64* measured_data = (epicsFloat64*)prec->a;
     unsigned int data_length = prec->nea;
-    std::vector<double> filtered_data;
+    std::vector<epicsFloat64> filtered_data;
     std::vector<epicsFloat64> input_data;
 
     if (prec->fta != menuFtypeDOUBLE)
@@ -48,7 +47,8 @@ long apply_filter_impl(aSubRecord *prec)
         return 1;
     }
 
-    if (data_length < 1) {
+    if (data_length < stride_len) {
+        errlogSevPrintf(errlogMajor, "%s input data too short for stride length", prec->name);
         return 1;
     }
 
