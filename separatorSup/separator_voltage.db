@@ -6,7 +6,7 @@ record(ai, "$(P)VOLT")
 {
   field(DESC, "Voltage")
   field(DTYP, "Soft Channel")
-  field(INP,  "$(P)CALIBRATE:VOLT CP MS")
+  field(INP,  "$(P)FILTERED:VOLT CP MS")
   field(PREC, "5")
   field(EGU, "kV")
   

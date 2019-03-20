@@ -9,9 +9,7 @@ record(ai, "$(P)CURR")
   field(EGU, "mA")
   
   field(HIHI, "$(PSU_MAX_CURR)")
-  field(LOLO,  "0")
   field(HHSV,  "MAJOR")
-  field(LLSV,  "MAJOR")
   
   info(INTEREST, "HIGH")
   info(archive, "VAL")
