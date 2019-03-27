@@ -1,1 +1,2 @@
 function(parse_stability)
+function(apply_filter)

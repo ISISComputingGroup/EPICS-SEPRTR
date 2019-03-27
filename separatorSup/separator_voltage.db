@@ -6,7 +6,7 @@ record(ai, "$(P)VOLT")
 {
   field(DESC, "Voltage")
   field(DTYP, "Soft Channel")
-  field(INP,  "$(P)CALIBRATE:VOLT CP MS")
+  field(INP,  "$(P)FILTERED:VOLT CP MS")
   field(PREC, "5")
   field(EGU, "kV")
   
@@ -47,6 +47,30 @@ record(acalcout, "$(P)_APPLYVOLTCALIB")
 
 record(waveform, "$(P)CALIBRATE:VOLT") {
   field(DESC, "Holds calibrated voltage data")
+  field(NELM, "$(NELM)")
+  field(DTYP, "Soft Channel")
+  field(PREC, "5")
+}
+
+record(aSub, "$(P)_APPLYVOLTFILTER")
+{
+    field(DESC, "Applies moving average to data")
+    field(SNAM, "apply_filter")
+
+    field(INPA, "$(P)CALIBRATE:VOLT CP")
+    field(FTA, "DOUBLE")
+    field(NOA, "$(NELM)")
+
+    field(OUTA, "$(P)FILTERED:VOLT PP")
+    field(FTVA, "DOUBLE")
+    field(NOVA, "$(NELM)")
+}
+
+
+record(waveform, "$(P)FILTERED:VOLT") {
+  field(DESC, "Holds filtered voltage data")
+  field(FTVL, "DOUBLE")
+  
   field(NELM, "$(NELM)")
   field(DTYP, "Soft Channel")
   field(PREC, "5")
