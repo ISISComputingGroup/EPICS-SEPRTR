@@ -155,6 +155,8 @@ record(calc, "$(P)STABILITY")
     info(alarm, "SEPRTR")
     info(archive, "VAL")
     info(INTEREST, "HIGH")
+    
+    field(ASG, "READONLY")
 }
 
 record(aSub, "$(P)STABILITY:PARSE")
