@@ -71,7 +71,7 @@ record(acalcout, "$(P)_STABILITYCHECK")
 {
     field(DESC, "Finds number of samples outside limits")
     field(OOPT, "Every Time")
-    field(NELM, "$(NELM)")
+    field(NELM, "$(FILTEREDLEN)")
 
     # 0 if sample is within threshold, 1 if sample is outside threshold
     # A is upper limit, B is lower limit, C + D is current threshold
