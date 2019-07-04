@@ -24,10 +24,14 @@ $(foreach dir, $(filter %Top, $(DIRS)), \
 # iocBoot depends on all *App dirs
 iocBoot_DEPEND_DIRS += $(filter %App,$(DIRS))
 
+TEST_RUNNER = $(TOP)/separatorSup/O.$(EPICS_HOST_ARCH)/runner
+
 # Add any additional dependency rules here:
 
 include $(TOP)/configure/RULES_TOP
 
 .PHONY: test
 test:
-	run_tests.bat
+ifneq ($(wildcard $(TEST_RUNNER)*),)
+	$(TEST_RUNNER) --gtest_output=xml:$(TOP)/test-reports/TEST-Separator.xml
+endif
