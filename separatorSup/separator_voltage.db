@@ -37,10 +37,10 @@ record(acalcout, "$(P)_APPLYVOLTCALIB")
   field(PREC, "5")
 
   field(CALC, "B * AA")
-  field(INAA, "$(P)DAQ:VOLT:_RAW")
+  field(INAA, "$(P)DAQ:VOLT:_RAW MSS")
   field(INPB, "$(P)_VOLTCALIBCONST NPP")
 
-  field(OUT, "$(P)CALIBRATE:VOLT PP")
+  field(OUT, "$(P)CALIBRATE:VOLT PP MSS")
   field(OEVT, "1")
 
 }
@@ -57,11 +57,11 @@ record(aSub, "$(P)_APPLYVOLTFILTER")
     field(DESC, "Applies moving average to data")
     field(SNAM, "apply_filter")
 
-    field(INPA, "$(P)CALIBRATE:VOLT CP")
+    field(INPA, "$(P)CALIBRATE:VOLT CP MSS")
     field(FTA, "DOUBLE")
     field(NOA, "$(NELM)")
 
-    field(OUTA, "$(P)FILTERED:VOLT PP")
+    field(OUTA, "$(P)FILTERED:VOLT PP MSS")
     field(FTVA, "DOUBLE")
     field(NOVA, "$(NELM)")
 }

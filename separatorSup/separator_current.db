@@ -41,10 +41,10 @@ record(acalcout, "$(P)_APPLYCURRCALIB")
 
   field(CALC, "B * AA")
 
-  field(INAA, "$(P)DAQ:CURR:_RAW")
+  field(INAA, "$(P)DAQ:CURR:_RAW MSS")
   field(INPB, "$(P)_CURRCALIBCONST NPP")
 
-  field(OUT, "$(P)CALIBRATE:CURR PP")
+  field(OUT, "$(P)CALIBRATE:CURR PP MSS")
   field(OEVT, "1")
 }
 
