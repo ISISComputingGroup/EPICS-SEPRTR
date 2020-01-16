@@ -79,8 +79,8 @@ record(acalcout, "$(P)_STABILITYCHECK")
 
     # Only update on new voltage (or current) data to avoid double counting.
     # To bypass filtering, replace INAA with $(P)CALIBRATE:VOLT.
-    field(INAA, "$(P)FILTERED:VOLT CP")
-    field(INBB, "$(P)CALIBRATE:CURR NPP")
+    field(INAA, "$(P)FILTERED:VOLT MSS CP")
+    field(INBB, "$(P)CALIBRATE:CURR MSS NPP")
 
     field(INPA, "$(P)VOLT:UPPERLIM NPP")
     field(INPB, "$(P)VOLT:LOWERLIM NPP")
@@ -98,7 +98,7 @@ record(calcout, "$(P)_ADDCOUNTS")
     field(CALC, "A+B")
 
     field(INPA, "$(P)_ADDCOUNTS")
-    field(INPB, "$(P)_STABILITYCHECK")
+    field(INPB, "$(P)_STABILITYCHECK MSS")
 }
 
 record(ao, "$(P)_ZEROCOUNTER")
@@ -143,7 +143,7 @@ record(calc, "$(P)STABILITY")
     field(SCAN, "Passive")
     field(CALC, "A < B")
 
-    field(INPA, "$(P)UNSTABLETIME CP")
+    field(INPA, "$(P)UNSTABLETIME CP MSS")
     field(INPB, "$(P)THRESHOLD")
 
     field(LOW, "0.5")
@@ -165,7 +165,7 @@ record(aSub, "$(P)STABILITY:PARSE")
     field(SNAM, "parse_stability")
     field(PINI, "YES")
 
-    field(INPA, "$(P)_ADDCOUNTS")
+    field(INPA, "$(P)_ADDCOUNTS MSS")
     field(FTA, "LONG")
 
     field(INPB, "$(P)WINDOWSIZE")
@@ -174,7 +174,7 @@ record(aSub, "$(P)STABILITY:PARSE")
     field(INPC, "$(P)RESETWINDOW CP")
     field(FTC, "LONG")
 
-    field(OUTA, "$(P)UNSTABLETIME.A PP")
+    field(OUTA, "$(P)UNSTABLETIME.A PP MSS")
     field(FTVA, "LONG")
 
     field(OUTB, "$(P)RESETWINDOW PP")
