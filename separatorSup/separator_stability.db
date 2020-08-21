@@ -150,7 +150,7 @@ record(calc, "$(P)STABILITY:_CALC")
 
 record(bi, "$(P)STABILITY") {
     field(DESC, "Separator stability status")
-    field(EGU, "")
+
     field(ZNAM, "unstable")
     field(ONAM, "stable")
     field(INP,  "$(P)STABILITY:_CALC CP MSS")
@@ -206,7 +206,7 @@ record(scalcout, "$(P)_DISABLEALARMS")
 record(sseq, "$(P)ALARMSTATUS")
 {
     field(DOL1, "$(P)_DISABLEALARMS.OSV CP")
-    field(LNK1, "$(P)STABILITY:_CALC.LSV PP")
+    field(LNK1, "$(P)STABILITY.ZSV PP")
     field(DOL2, "$(P)_DISABLEALARMS.OSV CP")
     field(LNK2, "$(P)UNSTABLETIME.HSV PP")
 
