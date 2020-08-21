@@ -139,7 +139,7 @@ record(calc, "$(P)UNSTABLETIME")
 record(calc, "$(P)STABILITY")
 {
     field(DESC, "1 if stable, 0 otherwise")
-    field(EGU, "s")
+    field(EGU, "")
     field(SCAN, "Passive")
     field(CALC, "A < B")
 
