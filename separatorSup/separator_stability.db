@@ -139,7 +139,6 @@ record(calc, "$(P)UNSTABLETIME")
 record(calc, "$(P)STABILITY:_CALC")
 {
     field(DESC, "1 if stable, 0 otherwise")
-    field(EGU, "")
     field(SCAN, "Passive")
     field(CALC, "A < B")
 
@@ -151,8 +150,9 @@ record(calc, "$(P)STABILITY:_CALC")
 
 record(bi, "$(P)STABILITY") {
     field(DESC, "Separator stability status")
-    field(ZNAM, "unstable")    
-    field(ONAM, "stable")     
+    field(EGU, "")
+    field(ZNAM, "unstable")
+    field(ONAM, "stable")
     field(INP,  "$(P)STABILITY:_CALC CP MSS")
 
     field(ZSV, "MAJOR")
