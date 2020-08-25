@@ -136,27 +136,31 @@ record(calc, "$(P)UNSTABLETIME")
     info(INTEREST, "HIGH")
 }
 
-record(calc, "$(P)STABILITY")
+record(calc, "$(P)STABILITY:_CALC")
 {
     field(DESC, "1 if stable, 0 otherwise")
-    field(EGU, "s")
     field(SCAN, "Passive")
     field(CALC, "A < B")
 
     field(INPA, "$(P)UNSTABLETIME CP MSS")
     field(INPB, "$(P)THRESHOLD")
+    
+    field(ASG, "READONLY")
+}
 
-    field(LOW, "0.5")
-    field(LSV, "MAJOR")
+record(bi, "$(P)STABILITY") {
+    field(DESC, "Separator stability status")
 
-    field(HIGH, "9999")
-    field(HSV, "NO_ALARM")
+    field(ZNAM, "Unstable")
+    field(ONAM, "Stable")
+    field(INP,  "$(P)STABILITY:_CALC CP MSS")
+
+    field(ZSV, "MAJOR")
+    field(OSV, "NO_ALARM")
 
     info(alarm, "SEPRTR")
     info(archive, "VAL")
     info(INTEREST, "HIGH")
-    
-    field(ASG, "READONLY")
 }
 
 record(aSub, "$(P)STABILITY:PARSE")
@@ -202,7 +206,7 @@ record(scalcout, "$(P)_DISABLEALARMS")
 record(sseq, "$(P)ALARMSTATUS")
 {
     field(DOL1, "$(P)_DISABLEALARMS.OSV CP")
-    field(LNK1, "$(P)STABILITY.LSV PP")
+    field(LNK1, "$(P)STABILITY.ZSV PP")
     field(DOL2, "$(P)_DISABLEALARMS.OSV CP")
     field(LNK2, "$(P)UNSTABLETIME.HSV PP")
 
