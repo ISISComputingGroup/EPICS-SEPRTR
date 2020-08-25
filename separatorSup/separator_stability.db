@@ -151,8 +151,8 @@ record(calc, "$(P)STABILITY:_CALC")
 record(bi, "$(P)STABILITY") {
     field(DESC, "Separator stability status")
 
-    field(ZNAM, "unstable")
-    field(ONAM, "stable")
+    field(ZNAM, "Unstable")
+    field(ONAM, "Stable")
     field(INP,  "$(P)STABILITY:_CALC CP MSS")
 
     field(ZSV, "MAJOR")
